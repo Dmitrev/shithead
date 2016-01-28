@@ -16,6 +16,7 @@ var GameManager =  new Game();
 
 var nextUserId = 1;
 
+
 function getGameData(){
 
     var data = {
@@ -37,10 +38,21 @@ app.get('/', function (req, res){
 
 io.on('connection', function(socket) {
 
+    // New player connects to server
+    if( !GameManager.isStarted() ){
+        // If game isn't started prompt the user to choose a nickname
+        socket.emit('chooseNickname');
+    }
+    else{
+        // Let the user know that the game already started
+        socket.emit('lateJoin');
+    }
+
+
     // What happens when the player has chosen a nickname
     socket.on('register', function(name){
 
-        if( typeof socket.player != "undefined" )
+        if( typeof socket.player != "undefined" || GameManager.isStarted() )
             return false;
 
         // Create new player instance

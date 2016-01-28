@@ -7,6 +7,9 @@ var Game = function() {
   // The amount of cards that the dealer gives each player at the start
   this._initialCardCount = 7;
 
+  // The current game state
+  this._started = false;
+
   this._players = [];
   this._deck = null;
   this._deckBuilder = new DeckBuilder();
@@ -64,5 +67,11 @@ Game.prototype.getPlayerCount = function(){
 Game.prototype.getPlayers = function(){
     return this._players;
 }
+
+Game.prototype.isStarted = function(){
+    return this._started;
+}
+
+
 
 module.exports = Game;
