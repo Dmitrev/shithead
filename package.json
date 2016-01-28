@@ -1,5 +1,6 @@
 {
-  "name": "application-name",
+  "name": "shithead-cardgame",
+  "author": "Dmitri Chebotarev <dmitri.chebotarev@gmail.com>",
   "version": "0.0.1",
   "dependencies": {
     "express": "^4.13.4",
