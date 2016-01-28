@@ -55,6 +55,7 @@ function checkStartGame(){
 
     // Yeah start the game! Let's go Whoo!
     GameManager.start();
+    io.sockets.emit('startGame');
 
 }
 
@@ -144,11 +145,13 @@ io.on('connection', function(socket) {
 });
 
 // Let the client know that a player has left the game
-eventEmitter.on('playerLeft', function(){
+function playerLeftHandler(){
     var data = getGameData();
-    eventEmitter.removeAllListeners('playerLeft');
+    //eventEmitter.removeListener('playerLeft', playerLeftHandler);
     io.sockets.emit('playerLeft', data);
-});
+}
+
+eventEmitter.on('playerLeft', playerLeftHandler);
 
 // Let the client know that a new player joined the game
 eventEmitter.on('registerd', function(){

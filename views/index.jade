@@ -5,20 +5,29 @@ html(lang="en")
         meta(charset="UTF-8")
         link(rel="stylesheet", href="/css/style.css", type="text/css")
     body
-        div(id="playerData")
-            p(id="pc") Player count: #[span= playerCount]
+        div(id="wrapper")
+            div(id="game")
+            div(id="playerData")
+                div(id="input-nickname")
+                    form
+                        p choose a nickname:
+                        input(id="name")
+                        button(type="submit") Join
+                div(id="lobby")
+                    p(id="pc") Player count: #[span= playerCount]
 
-            ul(id="playersList")
-                each player in players
-                    li= player._nickname
-                        if player._ready
-                          | (ready)
+                    ul(id="playersList")
+                        each player in players
+                            li= player._nickname
+                                if player._ready
+                                  | (ready)
 
-            button(id="ready-btn") Ready
-            button(id="unready-btn") Not Ready
-
+                button(id="ready-btn") Ready
+                button(id="unready-btn") Not Ready
+        script(src="/js/phaser.min.js")
         script(src="http://code.jquery.com/jquery-1.11.1.js")
         script(src="/socket.io/socket.io.js")
+        script(src="/js/game.js")
         script.
             var socket = io();
 
@@ -58,14 +67,19 @@ html(lang="en")
                 updatePlayerList(data.players);
             }
             socket.on('chooseNickname', function(){
-                var name = prompt("What is your name? ");
-                socket.emit('register', name);
+                // Show UI
+                $('#playerData').show();
+                $('#input-nickname').show();
+               // var name = prompt("What is your name? ");
+               // socket.emit('register', name);
 
-                return joined();
+               // return joined();
             });
 
             function joined(){
                 $('#ready-btn').show();
+                $('#input-nickname').hide();
+                $('#lobby').show();
             }
 
             function ready(){
@@ -97,6 +111,11 @@ html(lang="en")
                 alert('The game already started, you can no longer join.')
             });
 
+            socket.on('startGame', function(){
+                lobbyState.startGame();
+                $('#playerData').hide();
+            });
+
             $(function(){
                 init();
 
@@ -109,4 +128,17 @@ html(lang="en")
                     socket.emit('unready');
                     return notReady();
                 });
+
+                $(document).on('submit', '#input-nickname form', function(e){
+                    e.preventDefault();
+                    var name = $('#name').val();
+
+                    if( name.length < 1 ){
+                        return false;
+                    }
+                    socket.emit('register', name);
+                    return joined();
+                });
             });
+
+
