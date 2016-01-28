@@ -80,19 +80,22 @@ io.on('connection', function(socket) {
         return eventEmitter.emit('playerLeft');
     });
 
-    // Let the client know that a player has left the game
-    eventEmitter.on('playerLeft', function(){
-        var data = getGameData();
-        socket.emit('playerLeft', data);
-    });
 
-    // Let the client know that a new player joined the game
-    eventEmitter.on('registerd', function(){
 
-        var data = getGameData();
-        socket.emit ('newPlayer', data);
+});
 
-    });
+// Let the client know that a player has left the game
+eventEmitter.on('playerLeft', function(){
+    var data = getGameData();
+    eventEmitter.removeAllListeners('playerLeft');
+    io.sockets.emit('playerLeft', data);
+});
+
+// Let the client know that a new player joined the game
+eventEmitter.on('registerd', function(){
+
+    var data = getGameData();
+    io.sockets.emit ('newPlayer', data);
 
 });
 // Start the server
