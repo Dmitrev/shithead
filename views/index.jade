@@ -3,8 +3,14 @@ html(lang="en")
     head
         title= "Shithead"
         meta(charset="UTF-8")
+        link(rel="stylesheet", href="/css/style.css", type="text/css")
     body
-        p(id="pc") Player count: #[span= playerCount]
+        div(id="playerData")
+            p(id="pc") Player count: #[span= playerCount]
+            ul(id="playersList")
+                each player in players
+                    li= player._nickname
+
         script(src="http://code.jquery.com/jquery-1.11.1.js")
         script(src="/socket.io/socket.io.js")
         script.
@@ -15,16 +21,33 @@ html(lang="en")
                     socket.emit('register', name);
                 }
 
+            function updatePlayerList(players){
+
+                // Empty list
+                $('#playersList').html('');
+
+                for( var i = 0; i< players.length; i++){
+
+                    $('#playersList').append(
+                            $('<li>', {
+                                text: players[i]._nickname
+                            })
+                    );
+                }
+            }
+
             function updatePlayerCount(count){
                 $('#pc').find('span').text(count);
             }
 
             socket.on('newPlayer', function(data){
                 updatePlayerCount(data.playerCount);
+                updatePlayerList(data.players);
             });
 
             socket.on('playerLeft', function(data){
-                updatePlayerCount(data.playerCount)
+                updatePlayerCount(data.playerCount);
+                updatePlayerList(data.players);
             });
 
             $(function(){

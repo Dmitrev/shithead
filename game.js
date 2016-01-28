@@ -61,4 +61,8 @@ Game.prototype.getPlayerCount = function(){
     return this._players.length;
 }
 
+Game.prototype.getPlayers = function(){
+    return this._players;
+}
+
 module.exports = Game;

@@ -1,10 +1,14 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
+var path = require('path');
 
 app.set('view engine', 'jade');
+// Make assets accessible for the browser
+app.use(express.static(path.join(__dirname, 'public')));
 
 var Game = require('./game.js');
 var Player = require('./player.js');
@@ -12,23 +16,24 @@ var GameManager =  new Game();
 
 var nextUserId = 1;
 
-// Entry point
-app.get('/', function (req, res){
-    // Return the page
-    var playerCount = GameManager.getPlayerCount();
-    res.render('index', {
-        playerCount: playerCount
-    });
-});
-
 function getGameData(){
 
     var data = {
-        playerCount: GameManager.getPlayerCount()
+        playerCount: GameManager.getPlayerCount(),
+        players: GameManager.getPlayers()
     }
 
     return data;
 }
+
+// Entry point
+app.get('/', function (req, res){
+    // Return the page
+    var data = getGameData();
+    res.render('index', data);
+});
+
+
 
 io.on('connection', function(socket) {
 
@@ -53,6 +58,11 @@ io.on('connection', function(socket) {
 
     // User closed the browser
     socket.on('disconnect', function(){
+
+        // If a guest leaves, don't do anything
+        if(typeof socket.player == "undefined")
+            return false;
+
         console.log(socket.player._nickname + ' left the game');
         GameManager.removePlayer( socket.player._id);
         return eventEmitter.emit('playerLeft');
