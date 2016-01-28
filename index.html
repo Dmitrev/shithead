@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io();
+
+    function init(){
+        var name = prompt("What is your name? ");
+        socket.emit('register', name);
+    }
+
+    socket.on('newPlayer', function(){
+
+    });
+
+    $(function(){
+        init();
+    });
+</script>
+</body>
+</html>
