@@ -72,6 +72,10 @@ Game.prototype.isStarted = function(){
     return this._started;
 }
 
+Game.prototype.start = function(){
+    console.log("Game has been started");
+    this._started = true;
+}
 
 
 module.exports = Game;

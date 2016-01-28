@@ -2,6 +2,7 @@ var Player = function(id, nickname){
     this._id = id;
     this._nickname = nickname;
     this._hand = [];
+    this._ready = false;
 };
 
 Player.prototype.getNickname = function(){
@@ -19,5 +20,19 @@ Player.prototype.give = function(card) {
 
 Player.prototype.showHand = function(){
     console.log(this._hand);
+}
+
+Player.prototype.ready = function () {
+    console.log( this._nickname + " is ready");
+    this._ready = true;
+}
+
+Player.prototype.unReady = function () {
+    console.log( this._nickname + " is not ready");
+    this._ready = false;
+}
+
+Player.prototype.isReady = function(){
+    return this._ready;
 }
 module.exports = Player;

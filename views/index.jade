@@ -7,9 +7,15 @@ html(lang="en")
     body
         div(id="playerData")
             p(id="pc") Player count: #[span= playerCount]
+
             ul(id="playersList")
                 each player in players
                     li= player._nickname
+                        if player._ready
+                          | (ready)
+
+            button(id="ready-btn") Ready
+            button(id="unready-btn") Not Ready
 
         script(src="http://code.jquery.com/jquery-1.11.1.js")
         script(src="/socket.io/socket.io.js")
@@ -17,7 +23,8 @@ html(lang="en")
             var socket = io();
 
                 function init(){
-
+                    $('#ready-btn').hide();
+                    $('#unready-btn').hide();
                 }
 
             function updatePlayerList(players){
@@ -27,9 +34,15 @@ html(lang="en")
 
                 for( var i = 0; i< players.length; i++){
 
+                    var readyText = "";
+                    console.log(players[i]._ready);
+                    if( players[i]._ready == true){
+                        readyText = " (ready)";
+                    }
+
                     $('#playersList').append(
                             $('<li>', {
-                                text: players[i]._nickname
+                                text: players[i]._nickname + readyText
                             })
                     );
                 }
@@ -39,19 +52,45 @@ html(lang="en")
             function updatePlayerCount(count){
                 $('#pc').find('span').text(count);
             }
+
+            function updateGUI(data){
+                updatePlayerCount(data.playerCount);
+                updatePlayerList(data.players);
+            }
             socket.on('chooseNickname', function(){
                 var name = prompt("What is your name? ");
                 socket.emit('register', name);
+
+                return joined();
             });
 
+            function joined(){
+                $('#ready-btn').show();
+            }
+
+            function ready(){
+                $('#ready-btn').hide();
+                $('#unready-btn').show();
+            }
+
+            function notReady(){
+                $('#ready-btn').show();
+                $('#unready-btn').hide();
+            }
+
             socket.on('newPlayer', function(data){
-                updatePlayerCount(data.playerCount);
-                updatePlayerList(data.players);
+                updateGUI(data);
             });
 
             socket.on('playerLeft', function(data){
-                updatePlayerCount(data.playerCount);
-                updatePlayerList(data.players);
+                updateGUI(data);
+            });
+            socket.on('playerReady', function(data){
+                updateGUI(data);
+            });
+
+            socket.on('playerUnReady', function(data){
+                updateGUI(data);
             });
 
             socket.on('lateJoin', function(){
@@ -60,4 +99,14 @@ html(lang="en")
 
             $(function(){
                 init();
+
+                $(document).on('click', '#ready-btn', function(){
+                    socket.emit('ready');
+                    return ready();
+                });
+
+                $(document).on('click', '#unready-btn', function(){
+                    socket.emit('unready');
+                    return notReady();
+                });
             });

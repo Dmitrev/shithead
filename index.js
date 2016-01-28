@@ -27,6 +27,37 @@ function getGameData(){
     return data;
 }
 
+function checkStartGame(){
+
+    var playerCount = GameManager.getPlayerCount();
+
+    // You need atleast 2 players to start the game
+    if( playerCount < 2){
+        console.log("Not enough players to start the game");
+        return false;
+    }
+
+    // Count the amount of players that are ready
+    var readyPlayers = 0;
+    var players =  GameManager.getPlayers();
+
+    for( var i = 0; i < players.length; i++){
+        if(players[i].isReady()) {
+            readyPlayers++;
+        }
+    }
+
+    // Check if all players are ready
+    if( readyPlayers < playerCount){
+        console.log("Waiting for all players to ready");
+        return false;
+    }
+
+    // Yeah start the game! Let's go Whoo!
+    GameManager.start();
+
+}
+
 // Entry point
 app.get('/', function (req, res){
     // Return the page
@@ -57,6 +88,7 @@ io.on('connection', function(socket) {
 
         // Create new player instance
         socket.player = new Player(nextUserId, name);
+
         // Add player to the Game
         GameManager.addPlayer(socket.player);
 
@@ -80,6 +112,33 @@ io.on('connection', function(socket) {
         return eventEmitter.emit('playerLeft');
     });
 
+    socket.on('ready', function(){
+        // If a guest leaves, don't do anything
+        if(typeof socket.player == "undefined")
+            return false;
+
+        if( !socket.player.isReady()) {
+            socket.player.ready();
+        }
+        var data = getGameData();
+        io.sockets.emit('playerReady', data);
+
+        checkStartGame();
+    });
+
+
+    socket.on('unready', function(){
+        // If a guest leaves, don't do anything
+        if(typeof socket.player == "undefined")
+            return false;
+
+        if( socket.player.isReady()) {
+            socket.player.unReady();
+        }
+
+        var data = getGameData();
+        io.sockets.emit('playerUnReady', data);
+    });
 
 
 });
