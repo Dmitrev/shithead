@@ -68,8 +68,8 @@ html(lang="en")
             }
             socket.on('chooseNickname', function(){
                 // Show UI
-                $('#playerData').show();
-                $('#input-nickname').show();
+                //$('#playerData').show();
+                //$('#input-nickname').show();
                // var name = prompt("What is your name? ");
                // socket.emit('register', name);
 
@@ -117,7 +117,7 @@ html(lang="en")
             });
 
             socket.on('giveHand', function(data){
-                console.log(data);
+                playState.dealCards(data);
             });
 
             $(function(){

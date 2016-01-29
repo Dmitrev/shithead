@@ -71,7 +71,7 @@ var loadState = {
     },
 
     create: function(){
-        game.state.start('lobby');
+        game.state.start('play');
     }
 };
 
@@ -90,10 +90,51 @@ var lobbyState = {
         game.state.start('play');
     }
 };
-
+var items;
+var button;
+var x = 0;
+var y = 0;
+var cardWidth = 140;
+var cardHeight = 190;
+var self;
+var spacing = cardWidth;
 var playState = {
     create: function(){
         game.add.sprite( 0, 0, 'playTable');
+        self = this;
+        button = game.add.button(0, 0, 'clubs2', this.actionOnClick);
+        this.dealCards();
+        //x = (game.world.centerX - (cardWidth/2 ) );
+        y = ( game.world.height - cardHeight + 60);
+    },
+    dealCards: function(data){
+
+        items = new Phaser.Group(this.game, null, 'kaarten', true);
+
+    },
+
+    update: function(){
+
+    },
+
+    actionOnClick: function(){
+        items.create( x, y, 'clubs2');
+        x += spacing;
+
+        self.shiftCards();
+    },
+
+    shiftCards: function(){
+
+        var totalCards = items.length;
+        var totalLength = totalCards * cardWidth;
+
+        console.log('total lenght: '+ totalLength);
+
+        var newX = (game.world.width  - totalLength) / 2;
+        console.log(newX);
+
+        items.x = (newX);
     }
 };
 
