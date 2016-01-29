@@ -2,8 +2,8 @@ var DeckBuilder = require('./deckBuilder.js');
 var Deck = require('./deck.js');
 
 
-var Game = function() {
-
+var Game = function(eventEmitter) {
+  this._eventEmitter = eventEmitter;
   // The amount of cards that the dealer gives each player at the start
   this._initialCardCount = 7;
 
@@ -20,8 +20,9 @@ Game.prototype.addPlayer = function(player){
 }
 
 Game.prototype.start = function() {
-  this.createDeck();
-  this.dealCards();
+    console.log("Game has been started");
+    this._started = true;
+    this.createDeck();
 };
 
 // Create new Deck
@@ -49,6 +50,8 @@ Game.prototype.dealCards = function(){
            this._players[j].give(card);
         }
     }
+
+    return this._eventEmitter.emit('dealCards');
 }
 
 Game.prototype.removePlayer = function(playerId){
@@ -72,10 +75,6 @@ Game.prototype.isStarted = function(){
     return this._started;
 }
 
-Game.prototype.start = function(){
-    console.log("Game has been started");
-    this._started = true;
-}
 
 
 module.exports = Game;

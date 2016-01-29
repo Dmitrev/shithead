@@ -1,8 +1,9 @@
-var Player = function(id, nickname){
+var Player = function(id, nickname, socketid){
     this._id = id;
     this._nickname = nickname;
     this._hand = [];
     this._ready = false;
+    this._socketid = socketid;
 };
 
 Player.prototype.getNickname = function(){
@@ -34,5 +35,9 @@ Player.prototype.unReady = function () {
 
 Player.prototype.isReady = function(){
     return this._ready;
+}
+
+Player.prototype.getHand = function(){
+    return this._hand;
 }
 module.exports = Player;

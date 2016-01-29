@@ -116,6 +116,10 @@ html(lang="en")
                 $('#playerData').hide();
             });
 
+            socket.on('giveHand', function(data){
+                console.log(data);
+            });
+
             $(function(){
                 init();
 

@@ -5,6 +5,7 @@ var io = require('socket.io')(http);
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
 var path = require('path');
+var sockets = [];
 
 app.set('view engine', 'jade');
 // Make assets accessible for the browser
@@ -12,7 +13,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var Game = require('./game.js');
 var Player = require('./player.js');
-var GameManager =  new Game();
+var GameManager =  new Game(eventEmitter);
 
 var nextUserId = 1;
 
@@ -70,6 +71,8 @@ app.get('/', function (req, res){
 
 io.on('connection', function(socket) {
 
+    sockets.push(socket);
+
     // New player connects to server
     if( !GameManager.isStarted() ){
         // If game isn't started prompt the user to choose a nickname
@@ -88,7 +91,7 @@ io.on('connection', function(socket) {
             return false;
 
         // Create new player instance
-        socket.player = new Player(nextUserId, name);
+        socket.player = new Player(nextUserId, name, socket.id);
 
         // Add player to the Game
         GameManager.addPlayer(socket.player);
@@ -160,6 +163,40 @@ eventEmitter.on('registerd', function(){
     io.sockets.emit ('newPlayer', data);
 
 });
+
+eventEmitter.on('dealCards', dealCardsHandler);
+
+function dealCardsHandler(){
+
+    var players = GameManager.getPlayers();
+
+    for( var i = 0; i < players.length; i++){
+        console.log('Give hand to '+ players[i]._nickname);
+        var hand = players[i].getHand();
+        io.sockets.connected[players[i]._socketid].emit('giveHand', hand);
+    }
+    //for (var client in clients) {
+    //    console.log(client);
+    //    // Check is important, because the object has also prototype properties
+    //    if (clients.hasOwnProperty(client)) {
+    //
+    //        console.log(client.player);
+    //
+    //
+    //        console.log('Give hand to '+ client.player._nickname);
+    //        var hand = client.player.getHand();
+    //        //client.emit('giveHand', hand);
+    //    }
+    //}
+    //io.sockets.emit('giveHand', clients);
+    //console.log(clients.connected.player);
+    //for( var i = 0; i < clients.length; i++){
+    //    var client = clients[i];
+    //    console.log('Give hand to '+ client.player._nickname);
+    //    var hand = client.player.getHand();
+    //    socket.emit('giveHand', hand);
+    //}
+}
 // Start the server
 http.listen(3000, function(){
     console.log('listening on *:3000');

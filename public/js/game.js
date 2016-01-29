@@ -12,6 +12,7 @@ var loadState = {
         });
 
         game.load.image('backgroundLobby','/images/background-lobby.jpg');
+        game.load.image('playTable','/images/play-table.jpg');
         game.load.image('back','/images/cardBack_red2.png');
         game.load.image('clubs2','/images/cardClubs2.png');
         game.load.image('clubs3','/images/cardClubs3.png');
@@ -92,7 +93,7 @@ var lobbyState = {
 
 var playState = {
     create: function(){
-
+        game.add.sprite( 0, 0, 'playTable');
     }
 };
 
