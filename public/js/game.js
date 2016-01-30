@@ -86,7 +86,7 @@ preload: function(){
     },
 
     create: function(){
-        game.state.start('play');
+        game.state.start('lobby');
     }
 };
 
@@ -110,7 +110,7 @@ var playState = {
         game.add.sprite( 0, 0, 'playTable');
         self = this;
         button = game.add.button(0, 0, 'clubs2', this.actionOnClick);
-        this.dealCards();
+        //this.dealCards();
         //x = (game.world.centerX - (cardWidth/2 ) );
         y = ( game.world.height - cardHeight + 60);
 
@@ -150,6 +150,8 @@ var playState = {
 
         //items = new Phaser.Group(this.game, null, 'kaarten', true);
         items = game.add.group();
+
+        //console.log();
 
     },
 
