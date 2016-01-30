@@ -14,9 +14,11 @@ Player.prototype.getId = function(){
     return this._id;
 }
 
-Player.prototype.give = function(card) {
-    console.log('Given player '+this._nickname + ' a card');
-    this._hand.push(card);
+Player.prototype.give = function(cards) {
+
+    for(var i = 0; i < cards.length; i++) {
+        this._hand.push(cards[i]);
+    }
 }
 
 Player.prototype.showHand = function(){

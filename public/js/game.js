@@ -110,7 +110,6 @@ var playState = {
         game.add.sprite( 0, 0, 'playTable');
         self = playState;
         console.log("STARTING GAME");
-        button = game.add.button(0, 0, 'clubs2', this.actionOnClick);
         //this.dealCards();
         //x = (game.world.centerX - (cardWidth/2 ) );
         y = ( game.world.height - cardHeight + 60);
@@ -161,7 +160,10 @@ var playState = {
             //    playState.actionOnClick();
 
             // So yeah
-            playState.actionOnClick();
+            console.log(data[i][0]);
+            var cardKey = cardTranslator.translate(data[i]._value, data[i]._suit);
+            console.log(cardKey);
+            playState.giveCard(cardKey);
         }
 
     },
@@ -170,13 +172,11 @@ var playState = {
 
     },
 
-    actionOnClick: function(){
+    giveCard: function(cardKey){
 
-        var tmpArray = ['spadesQ', 'joker', 'spades6'];
-        var item = tmpArray[Math.floor(Math.random()*tmpArray.length)];
         //console.log(item);
         //items.create( x, y, item);
-        var button = game.make.button(x, y, item, playState.onCardClick);
+        var button = game.make.button(x, y, cardKey, playState.onCardClick);
         // Check to see if the card is already clicked
         button.active = false;
         items.add(button);

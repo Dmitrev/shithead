@@ -148,6 +148,8 @@ io.on('connection', function(socket) {
         if(typeof socket.player == "undefined" || !GameManager.isStarted())
             return false;
 
+        console.log("CLIENT "+socket.player._nickname + " IS ASKING FOR CARDS");
+
         dealCardsHandler(socket);
     });
 
@@ -176,12 +178,17 @@ eventEmitter.on('registerd', function(){
 function dealCardsHandler(socket){
 
     var players = GameManager.getPlayers();
+    var socketPlayer = socket.player;
+
 
     for( var i = 0; i < players.length; i++){
-        if(socket.player.socketid == players[i].socketid) {
-            console.log('Give hand to ' + players[i]._nickname);
-            var hand = players[i].getHand();
-            io.sockets.connected[players[i]._socketid].emit('giveHand', hand);
+        var player = players[i];
+        if(socketPlayer._socketid == player._socketid) {
+
+            console.log('Give hand to ' + player._nickname);
+            var hand = player.getHand();
+            io.sockets.connected[player._socketid].emit('giveHand', hand);
+
         }
     }
     //for (var client in clients) {
