@@ -262,6 +262,7 @@ var playState = {
         //console.log(currentView);
 
         self.shiftCards();
+        self.resetCardsActive();
     },
 
     onClickRectRight: function(){
@@ -272,6 +273,7 @@ var playState = {
         currentView++;
         //console.log(currentView);
         self.shiftCards();
+        self.resetCardsActive();
     },
 
     checkView: function(){
