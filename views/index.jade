@@ -44,7 +44,7 @@ html(lang="en")
                 for( var i = 0; i< players.length; i++){
 
                     var readyText = "";
-                    console.log(players[i]._ready);
+                    //console.log(players[i]._ready);
                     if( players[i]._ready == true){
                         readyText = " (ready)";
                     }
@@ -113,11 +113,14 @@ html(lang="en")
 
             socket.on('startGame', function(){
                 lobbyState.startGame();
+                console.log("SOCKET: START GAME");
                 $('#playerData').hide();
             });
 
             socket.on('giveHand', function(data){
+                console.log("SOCKET: GIVE HAND");
                 playState.dealCards(data);
+
             });
 
             $(function(){

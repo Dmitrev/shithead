@@ -144,6 +144,13 @@ io.on('connection', function(socket) {
         io.sockets.emit('playerUnReady', data);
     });
 
+    socket.on('askCards', function(){
+        if(typeof socket.player == "undefined" || !GameManager.isStarted())
+            return false;
+
+        dealCardsHandler(socket);
+    });
+
 
 });
 
@@ -164,16 +171,18 @@ eventEmitter.on('registerd', function(){
 
 });
 
-eventEmitter.on('dealCards', dealCardsHandler);
-
-function dealCardsHandler(){
+//eventEmitter.on('dealCards', dealCardsHandler);
+//
+function dealCardsHandler(socket){
 
     var players = GameManager.getPlayers();
 
     for( var i = 0; i < players.length; i++){
-        console.log('Give hand to '+ players[i]._nickname);
-        var hand = players[i].getHand();
-        io.sockets.connected[players[i]._socketid].emit('giveHand', hand);
+        if(socket.player.socketid == players[i].socketid) {
+            console.log('Give hand to ' + players[i]._nickname);
+            var hand = players[i].getHand();
+            io.sockets.connected[players[i]._socketid].emit('giveHand', hand);
+        }
     }
     //for (var client in clients) {
     //    console.log(client);

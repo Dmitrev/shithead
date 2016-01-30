@@ -1,5 +1,4 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
-
 var sprite;
 var items;
 var button;
@@ -19,7 +18,7 @@ var rectRight = null;
 var loadState = {
 
 
-preload: function(){
+    preload: function(){
         console.log('start loading');
         var loadingLabel = game.add.text(80, 150, 'loading...', {
             font: '30px Courier',
@@ -101,14 +100,16 @@ var lobbyState = {
     },
 
     startGame: function(){
+        console.log("LOBBY TRIGGER START GAME");
         game.state.start('play');
     }
 };
 var playState = {
     create: function(){
-
+        playState.started = true;
         game.add.sprite( 0, 0, 'playTable');
-        self = this;
+        self = playState;
+        console.log("STARTING GAME");
         button = game.add.button(0, 0, 'clubs2', this.actionOnClick);
         //this.dealCards();
         //x = (game.world.centerX - (cardWidth/2 ) );
@@ -119,7 +120,7 @@ var playState = {
         rectLeft.height = 190;
         rectLeft.x = 0 - cardWidth + 40;
         rectLeft.y = game.world.height - rectLeft.height + 60;
-        rectLeft.onInputDown.add(self.onClickRectLeft);
+        rectLeft.onInputDown.add(playState.onClickRectLeft);
         rectLeft.alpha = 0;
         rectLeft.visible = false;
 
@@ -128,7 +129,7 @@ var playState = {
         rectRight.height = 190;
         rectRight.x = game.world.width - rectRight.width;
         rectRight.y = game.world.height - rectRight.height + 60;
-        rectRight.onInputDown.add(self.onClickRectRight);
+        rectRight.onInputDown.add(playState.onClickRectRight);
         rectRight.alpha = 0;
         rectRight.visible = false;
 
@@ -139,19 +140,29 @@ var playState = {
         defaultCard.height = 190;
         defaultCard.x = game.world.centerX - cardWidth / 2;
         defaultCard.y = game.world.centerY - cardHeight / 2;
-        defaultCard.onInputDown.add(self.onClickTableCard);
+        defaultCard.onInputDown.add(playState.onClickTableCard);
         defaultCard.alpha = 0;
 
         tableCards.add(defaultCard);
+        socket.emit('askCards');
+        console.log("ASK CARDS CLIENT");
+
 
 
     },
     dealCards: function(data){
-
+    console.log("GOT "+data.length + " CARDS FROM THE SERVER");
         //items = new Phaser.Group(this.game, null, 'kaarten', true);
         items = game.add.group();
+        //console.log(rectLeft);
 
-        //console.log();
+        for( var i = 0; i < data.length; i++){
+            // For some reason this doesn't work :/
+            //    playState.actionOnClick();
+
+            // So yeah
+            playState.actionOnClick();
+        }
 
     },
 
@@ -165,7 +176,7 @@ var playState = {
         var item = tmpArray[Math.floor(Math.random()*tmpArray.length)];
         //console.log(item);
         //items.create( x, y, item);
-        var button = game.make.button(x, y, item, self.onCardClick);
+        var button = game.make.button(x, y, item, playState.onCardClick);
         // Check to see if the card is already clicked
         button.active = false;
         items.add(button);
@@ -173,7 +184,7 @@ var playState = {
 
 
 
-        self.shiftCards();
+        playState.shiftCards();
     },
     shiftCards: function(){
 
@@ -182,14 +193,14 @@ var playState = {
         //console.log(totalCards);
         //console.log(totalLength);
         //console.log("CurrentView: "+currentView);
-        console.log('total lenght: '+ totalLength);
+        //console.log('total lenght: '+ totalLength);
 
         if( totalLength <= game.world.width) {
             var newX = (game.world.width - totalLength) / 2;
             //console.log(newX);
 
             items.x = (newX);
-            self.resetCardsPlacement();
+            playState.resetCardsPlacement();
 
         }
         else {
@@ -234,7 +245,7 @@ var playState = {
 
         }
 
-        self.checkView();
+        playState.checkView();
     },
 
     onCardClick: function(){
@@ -248,7 +259,7 @@ var playState = {
         }
         else{
             //console.log('You clicked this card the first time');
-            self.resetCardsActive();
+            playState.resetCardsActive();
             this.active = true;
             this.y -= 60;
         }
@@ -263,8 +274,8 @@ var playState = {
         currentView--;
         //console.log(currentView);
 
-        self.shiftCards();
-        self.resetCardsActive();
+        playState.shiftCards();
+        playState.resetCardsActive();
     },
 
     onClickRectRight: function(){
@@ -274,8 +285,8 @@ var playState = {
 
         currentView++;
         //console.log(currentView);
-        self.shiftCards();
-        self.resetCardsActive();
+        playState.shiftCards();
+        playState.resetCardsActive();
     },
 
     checkView: function(){
@@ -310,14 +321,14 @@ var playState = {
     },
     onClickTableCard: function(){
         //console.log('Clicked on the table');
-        var card = self.getActiveCard();
+        var card = playState.getActiveCard();
 
        // console.log(card);
         if( card == null) {
             return false;
         }
 
-        self.addCardToTable(card);
+        playState.addCardToTable(card);
 
 
     },
@@ -345,9 +356,9 @@ var playState = {
         tableCard.x = game.world.centerX - cardWidth / 2;
         tableCard.y = game.world.centerY - cardHeight / 2;
 
-        tableCard.onInputDown.add(self.onClickTableCard);
+        tableCard.onInputDown.add(playState.onClickTableCard);
         tableCards.add(tableCard);
-        self.shiftCards();
+        playState.shiftCards();
     },
     resetCardsPlacement: function(){
         var x = 0;

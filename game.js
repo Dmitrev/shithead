@@ -51,7 +51,7 @@ Game.prototype.dealCards = function(){
         }
     }
 
-    return this._eventEmitter.emit('dealCards');
+    //return this._eventEmitter.emit('dealCards');
 }
 
 Game.prototype.removePlayer = function(playerId){
