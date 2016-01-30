@@ -117,7 +117,7 @@ var playState = {
         rectLeft.width = 140;
         rectLeft.height = 190;
         rectLeft.x = 0 - cardWidth + 40;
-        rectLeft.y = game.world.height - rectLeft.height;
+        rectLeft.y = game.world.height - rectLeft.height + 60;
         rectLeft.onInputDown.add(self.onClickRectLeft);
         rectLeft.alpha = 0;
         rectLeft.visible = false;
@@ -126,7 +126,7 @@ var playState = {
         rectRight.width = 140;
         rectRight.height = 190;
         rectRight.x = game.world.width - rectRight.width;
-        rectRight.y = game.world.height - rectRight.height;
+        rectRight.y = game.world.height - rectRight.height + 60;
         rectRight.onInputDown.add(self.onClickRectRight);
         rectRight.alpha = 0;
         rectRight.visible = false;
@@ -150,6 +150,8 @@ var playState = {
         //console.log(item);
         //items.create( x, y, item);
         var button = game.make.button(x, y, item, self.onCardClick);
+        // Check to see if the card is already clicked
+        button.active = false;
         items.add(button);
         x += spacing;
 
@@ -164,11 +166,11 @@ var playState = {
         var totalCards = items.length;
         var totalLength = totalCards * cardWidth;
 
-        console.log('total lenght: '+ totalLength);
+        //console.log('total lenght: '+ totalLength);
 
         if( totalLength <= game.world.width) {
             var newX = (game.world.width - totalLength) / 2;
-            console.log(newX);
+            //console.log(newX);
 
             items.x = (newX);
 
@@ -183,7 +185,7 @@ var playState = {
 
             items.forEach(function (item) {
 
-                console.log(n);
+                //console.log(n);
 
                 if (n < currentView || n == 0){
                     // Dirty trick to skip the first
@@ -216,11 +218,24 @@ var playState = {
     },
 
     onCardClick: function(){
-        console.log(this);
+        if( this.active ){
+            console.log('Play this card');
+            this.active = false;
+            this.y +=  60;
+
+
+
+        }
+        else{
+            console.log('You clicked this card the first time');
+            self.resetCardsActive();
+            this.active = true;
+            this.y -= 60;
+        }
     },
 
     onClickRectLeft: function(){
-        console.log('Clicked left button rectangle');
+        //console.log('Clicked left button rectangle');
 
         if( currentView == 0)
             return false;
@@ -250,13 +265,25 @@ var playState = {
         // on right side of the screen then show the button
         if( items.length > cardsInView && (currentView + cardsInView) < items.length ){
             rectRight.visible = true;
-            console.log('Show button right');
+            //console.log('Show button right');
         }
 
         if( items.length > cardsInView && currentView > 0){
             rectLeft.visible = true;
-            console.log('Show button left');
+            //console.log('Show button left');
         }
+    },
+
+    resetCardsActive: function(){
+        console.log('reset other active cards');
+        items.forEach(function (item) {
+
+            console.log(item.active);
+            if( item.active == true ) {
+                item.active = false;
+                item.y += 60;
+            }
+        });
     }
 };
 
