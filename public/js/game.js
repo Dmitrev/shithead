@@ -1,10 +1,25 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
 
 var sprite;
+var items;
+var button;
+var x = 0;
+var y = 0;
+var cardWidth = 140;
+var cardHeight = 190;
+var self;
+var spacing = cardWidth;
+var cardsInView = 5;
+var currentView = 0;
+
+
+var rectLeft = null;
+var rectRight = null;
 
 var loadState = {
 
-    preload: function(){
+
+preload: function(){
         console.log('start loading');
         var loadingLabel = game.add.text(80, 150, 'loading...', {
             font: '30px Courier',
@@ -75,7 +90,6 @@ var loadState = {
     }
 };
 
-
 var lobbyState = {
 
 
@@ -90,14 +104,6 @@ var lobbyState = {
         game.state.start('play');
     }
 };
-var items;
-var button;
-var x = 0;
-var y = 0;
-var cardWidth = 140;
-var cardHeight = 190;
-var self;
-var spacing = cardWidth;
 var playState = {
     create: function(){
         game.add.sprite( 0, 0, 'playTable');
@@ -106,10 +112,28 @@ var playState = {
         this.dealCards();
         //x = (game.world.centerX - (cardWidth/2 ) );
         y = ( game.world.height - cardHeight + 60);
+
+        rectLeft = game.add.button(0,0);
+        rectLeft.width = 140;
+        rectLeft.height = 190;
+        rectLeft.x = 0;
+        rectLeft.y = game.world.height - rectLeft.height;
+        rectLeft.onInputDown.add(self.onClickRectLeft);
+        rectLeft.alpha = 0;
+
+        rectRight = game.add.button(0,0);
+        rectRight.width = 140;
+        rectRight.height = 190;
+        rectRight.x = game.world.width - rectRight.width;
+        rectRight.y = game.world.height - rectRight.height;
+        rectRight.onInputDown.add(self.onClickRectRight);
+        rectRight.alpha = 0;
+
     },
     dealCards: function(data){
 
-        items = new Phaser.Group(this.game, null, 'kaarten', true);
+        //items = new Phaser.Group(this.game, null, 'kaarten', true);
+        items = game.add.group();
 
     },
 
@@ -118,23 +142,96 @@ var playState = {
     },
 
     actionOnClick: function(){
-        items.create( x, y, 'clubs2');
+
+        var tmpArray = ['spadesQ', 'joker', 'spades6'];
+        var item = tmpArray[Math.floor(Math.random()*tmpArray.length)];
+        //console.log(item);
+        //items.create( x, y, item);
+        var button = game.make.button(x, y, item, self.onCardClick);
+        items.add(button);
         x += spacing;
 
         self.shiftCards();
     },
-
     shiftCards: function(){
+
+
 
         var totalCards = items.length;
         var totalLength = totalCards * cardWidth;
 
         console.log('total lenght: '+ totalLength);
 
-        var newX = (game.world.width  - totalLength) / 2;
-        console.log(newX);
+        if( totalLength <= game.world.width) {
+            var newX = (game.world.width - totalLength) / 2;
+            console.log(newX);
 
-        items.x = (newX);
+            items.x = (newX);
+
+        }
+        else {
+            items.x = 0;
+            var increment = cardWidth + ((game.world.width - totalLength) / totalCards);
+
+            var newCardX = 0;
+            var n = 0;
+
+
+            items.forEach(function (item) {
+
+                console.log(n);
+
+                if (n < currentView || n == 0){
+                    // Dirty trick to skip the first
+                    newCardX = 0;
+                }
+
+                else if( n == currentView ){
+                    newCardX = 40;
+                }
+
+
+
+                else if(  n >= (currentView + cardsInView)){
+                    newCardX = (cardWidth * 5) - 40;
+                }
+
+                else {
+                    newCardX += cardWidth;
+                }
+
+                item.x = newCardX;
+
+                n++;
+            });
+
+
+        }
+    },
+
+    onCardClick: function(){
+        console.log(this);
+    },
+
+    onClickRectLeft: function(){
+        console.log('Clicked left button rectangle');
+
+        if( currentView == 0)
+            return false;
+
+        currentView--;
+        console.log(currentView);
+        self.shiftCards();
+    },
+
+    onClickRectRight: function(){
+
+        if( (currentView + cardsInView + 1) > items.length )
+            return false;
+
+        currentView++;
+        console.log(currentView);
+        self.shiftCards();
     }
 };
 
