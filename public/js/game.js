@@ -11,7 +11,7 @@ var self;
 var spacing = cardWidth;
 var cardsInView = 5;
 var currentView = 0;
-
+var tableCards = null;
 
 var rectLeft = null;
 var rectRight = null;
@@ -106,6 +106,7 @@ var lobbyState = {
 };
 var playState = {
     create: function(){
+
         game.add.sprite( 0, 0, 'playTable');
         self = this;
         button = game.add.button(0, 0, 'clubs2', this.actionOnClick);
@@ -130,6 +131,19 @@ var playState = {
         rectRight.onInputDown.add(self.onClickRectRight);
         rectRight.alpha = 0;
         rectRight.visible = false;
+
+        tableCards = game.add.group();
+        // Add an empty card to have something clickable if the table is empty
+        var defaultCard = game.add.button(0,0);
+        defaultCard.width = 140;
+        defaultCard.height = 190;
+        defaultCard.x = game.world.centerX - cardWidth / 2;
+        defaultCard.y = game.world.centerY - cardHeight / 2;
+        defaultCard.onInputDown.add(self.onClickTableCard);
+        defaultCard.alpha = 0;
+
+        tableCards.add(defaultCard);
+
 
     },
     dealCards: function(data){
@@ -161,18 +175,19 @@ var playState = {
     },
     shiftCards: function(){
 
-
-
         var totalCards = items.length;
         var totalLength = totalCards * cardWidth;
-
-        //console.log('total lenght: '+ totalLength);
+        //console.log(totalCards);
+        //console.log(totalLength);
+        //console.log("CurrentView: "+currentView);
+        console.log('total lenght: '+ totalLength);
 
         if( totalLength <= game.world.width) {
             var newX = (game.world.width - totalLength) / 2;
             //console.log(newX);
 
             items.x = (newX);
+            self.resetCardsPlacement();
 
         }
         else {
@@ -183,7 +198,7 @@ var playState = {
             var n = 0;
 
 
-            items.forEach(function (item) {
+            items.forEachExists(function (item) {
 
                 //console.log(n);
 
@@ -193,16 +208,19 @@ var playState = {
                 }
 
                 else if( n == currentView ){
+                    console.log("CANCER");
                     newCardX = 40;
                 }
 
 
 
                 else if(  n >= (currentView + cardsInView)){
+
                     newCardX = (cardWidth * 5) - 40;
                 }
 
                 else {
+
                     newCardX += cardWidth;
                 }
 
@@ -219,7 +237,7 @@ var playState = {
 
     onCardClick: function(){
         if( this.active ){
-            console.log('Play this card');
+            //console.log('Play this card');
             this.active = false;
             this.y +=  60;
 
@@ -227,7 +245,7 @@ var playState = {
 
         }
         else{
-            console.log('You clicked this card the first time');
+            //console.log('You clicked this card the first time');
             self.resetCardsActive();
             this.active = true;
             this.y -= 60;
@@ -241,7 +259,8 @@ var playState = {
             return false;
 
         currentView--;
-        console.log(currentView);
+        //console.log(currentView);
+
         self.shiftCards();
     },
 
@@ -251,7 +270,7 @@ var playState = {
             return false;
 
         currentView++;
-        console.log(currentView);
+        //console.log(currentView);
         self.shiftCards();
     },
 
@@ -276,13 +295,61 @@ var playState = {
 
     resetCardsActive: function(){
         console.log('reset other active cards');
-        items.forEach(function (item) {
+        items.forEachExists(function (item) {
 
-            console.log(item.active);
+            //console.log(item.active);
             if( item.active == true ) {
                 item.active = false;
                 item.y += 60;
             }
+        });
+    },
+    onClickTableCard: function(){
+        //console.log('Clicked on the table');
+        var card = self.getActiveCard();
+
+       // console.log(card);
+        if( card == null) {
+            return false;
+        }
+
+        self.addCardToTable(card);
+
+
+    },
+
+    getActiveCard: function(){
+        var card = null;
+        items.forEachExists(function (item) {
+            ///console.log(item);
+            if( item.active == true ) {
+                card = item;
+            }
+        });
+
+        return card;
+    },
+
+    addCardToTable: function(card) {
+
+
+        card.destroy();
+
+        var tableCard = game.add.button(0,0, card.key);
+        tableCard.width = 140;
+        tableCard.height = 190;
+        tableCard.x = game.world.centerX - cardWidth / 2;
+        tableCard.y = game.world.centerY - cardHeight / 2;
+
+        tableCard.onInputDown.add(self.onClickTableCard);
+        tableCards.add(tableCard);
+        self.shiftCards();
+    },
+    resetCardsPlacement: function(){
+        var x = 0;
+        items.forEach(function(item){
+            item.x = x;
+            x+= spacing;
         });
     }
 };
