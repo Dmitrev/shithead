@@ -116,10 +116,11 @@ var playState = {
         rectLeft = game.add.button(0,0);
         rectLeft.width = 140;
         rectLeft.height = 190;
-        rectLeft.x = 0;
+        rectLeft.x = 0 - cardWidth + 40;
         rectLeft.y = game.world.height - rectLeft.height;
         rectLeft.onInputDown.add(self.onClickRectLeft);
         rectLeft.alpha = 0;
+        rectLeft.visible = false;
 
         rectRight = game.add.button(0,0);
         rectRight.width = 140;
@@ -128,6 +129,7 @@ var playState = {
         rectRight.y = game.world.height - rectRight.height;
         rectRight.onInputDown.add(self.onClickRectRight);
         rectRight.alpha = 0;
+        rectRight.visible = false;
 
     },
     dealCards: function(data){
@@ -150,6 +152,8 @@ var playState = {
         var button = game.make.button(x, y, item, self.onCardClick);
         items.add(button);
         x += spacing;
+
+
 
         self.shiftCards();
     },
@@ -207,6 +211,8 @@ var playState = {
 
 
         }
+
+        self.checkView();
     },
 
     onCardClick: function(){
@@ -232,6 +238,25 @@ var playState = {
         currentView++;
         console.log(currentView);
         self.shiftCards();
+    },
+
+    checkView: function(){
+
+        // Hide all buttons by default
+        rectRight.visible = false;
+        rectLeft.visible = false;
+
+        // If we have more cards in our hand than we can see and have some cards in a pile
+        // on right side of the screen then show the button
+        if( items.length > cardsInView && (currentView + cardsInView) < items.length ){
+            rectRight.visible = true;
+            console.log('Show button right');
+        }
+
+        if( items.length > cardsInView && currentView > 0){
+            rectLeft.visible = true;
+            console.log('Show button left');
+        }
     }
 };
 
