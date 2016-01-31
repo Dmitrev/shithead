@@ -108,5 +108,16 @@ Game.prototype.kickPlayerByIndex = function(index){
     console.log()
 }
 
+Game.prototype.stop = function(){
+    this._started = false;
+}
+
+// Give the first turn to a random player
+Game.prototype.firstTurn = function(){
+    var randomPlayer = this._players[Math.floor(Math.random()*this._players.length)];
+
+    this._eventEmitter.emit('nextTurn', randomPlayer);
+}
+
 
 module.exports = Game;

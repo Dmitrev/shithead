@@ -182,6 +182,12 @@ io.on('connection', function(socket) {
 
             // Kill timeout function that kicks all inactive players
             clearTimeout(timerWaitForPlayers);
+
+            // If conditions to end the game aren't met, give the first player the turn
+            if( !checkEndGame() ){
+                firstPlayerTurn();
+            }
+
         }
         else{
             console.log(readyPlayers+' out of '+ players.length + ' players are ready');
@@ -218,12 +224,34 @@ function waitForPlayersToStartGame (){
                    GameManager.kickPlayerByIndex(i);
                    console.log("Kicked player "+ playerName + " for being inactive");
 
-                   io.sockets.connected[socketId].emit('kicked');
+                   var socketPlayer = io.sockets.connected[socketId];
+                   socketPlayer.emit('kicked');
+                   // Disconnect the player from the server
+                   socketPlayer.disconnect();
                }
+           }
+           // If conditions to end the game aren't met, give the first player the turn
+           if( !checkEndGame() ){
+               firstPlayerTurn();
            }
        },
    timeoutTime);
 
+}
+
+// Check if conditions to end the game are met
+function checkEndGame(){
+
+    // Check if we still have enough players in the game
+    var players = GameManager.getPlayers();
+
+    if( players.length < 2){
+        notEnoughPlayers();
+        return true;
+    }
+
+
+    return false;
 }
 
 eventEmitter.on('playerLeft', playerLeftHandler);
@@ -240,7 +268,7 @@ eventEmitter.on('registerd', function(){
 eventEmitter.on('nextTurn', function(player){
 
     var socket = getSocket(player._socketid);
-    console.log(socket);
+    ///console.log(socket);
     // Tell the players its his turn
     socket.emit('giveTurn');
 
@@ -267,6 +295,8 @@ function dealCardsHandler(socket){
 
         }
     }
+
+
     //for (var client in clients) {
     //    console.log(client);
     //    // Check is important, because the object has also prototype properties
@@ -296,6 +326,22 @@ function getSocket(id){
             return sockets[i];
         }
     }
+}
+
+// Not enough players to play the game
+function notEnoughPlayers(){
+    GameManager.stop();
+
+    var data = {
+      reason: 1
+    };
+    console.log('Game has been ended because there are not enough players.')
+    io.sockets.emit('stopped', data);
+}
+
+function firstPlayerTurn(){
+    // Give first turn to a random player
+    GameManager.firstTurn();
 }
 // Start the server
 http.listen(3000, function(){

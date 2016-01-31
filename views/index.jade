@@ -26,6 +26,8 @@ html(lang="en")
 
                 div(id="kicked")
                     p You have been kicked from the game for being inactive, refresh your browser.
+                div(id="stopped")
+                    p
 
         script(src="/js/phaser.min.js")
         script(src="http://code.jquery.com/jquery-1.11.1.js")
@@ -140,6 +142,17 @@ html(lang="en")
                 $('#playerData').show();
                 $('#lobby').hide();
                 $('#kicked').show();
+            });
+
+            socket.on('stopped', function(data){
+                $('#playerData').show();
+                $('#lobby').hide();
+                $('#stopped').show();
+                var el = $('#stopped').find('p');
+
+                if( data.reason == 1){
+                    el.text("The game has ended because there aren't enough players.");
+                }
             });
 
             $(function(){
