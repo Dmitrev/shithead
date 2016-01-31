@@ -62,4 +62,11 @@ Deck.prototype.place = function(card){
   this._graveYard.push(card);
 }
 
+Deck.prototype.getLastCard = function(){
+  if( this._graveYard.length == 0)
+    return null;
+
+  return this._graveYard[ this._graveYard.length-1 ];
+}
+
 module.exports = Deck;

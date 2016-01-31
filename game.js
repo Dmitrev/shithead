@@ -1,6 +1,6 @@
 var DeckBuilder = require('./deckBuilder.js');
 var Deck = require('./deck.js');
-
+var rules = require('./public/js/rules.js');
 
 var Game = function(eventEmitter) {
   this._eventEmitter = eventEmitter;
@@ -129,6 +129,11 @@ Game.prototype.move = function(player, card){
 
     if( !playerHasCard ){
         console.log(player._nickname + " tried to place a card he/she does not have");
+        return false;
+    }
+
+    if( !rules.check(card, this._deck.getLastCard() ) ){
+        console.log(player._nickname + " tried to place a card against the rules");
         return false;
     }
 
