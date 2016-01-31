@@ -33,6 +33,7 @@ html(lang="en")
         script(src="http://code.jquery.com/jquery-1.11.1.js")
         script(src="/socket.io/socket.io.js")
         script(src="/js/cardTranslator.js")
+        script(src="/js/rules.js")
         script(src="/js/game.js")
         script.
             var socket = io();
@@ -165,7 +166,8 @@ html(lang="en")
             });
 
             socket.on('placed', function(card){
-                // Render card for others
+                // Render card for othersc
+                console.log(card);
                 playState.serverPlace(card);
             });
 

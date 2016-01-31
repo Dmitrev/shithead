@@ -58,11 +58,6 @@ Deck.prototype.takeOne = function(){
 Deck.prototype.place = function(card){
 
   // set clientside values to server side
-  card._value = card.value;
-  card._suit = card.suit;
-
-  delete card.value;
-  delete card.suit;
 
   this._graveYard.push(card);
 }

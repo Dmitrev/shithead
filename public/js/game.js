@@ -22,7 +22,7 @@ var loadState = {
 
 
     preload: function(){
-        console.log('start loading');
+        //console.log('start loading');
         var loadingLabel = game.add.text(80, 150, 'loading...', {
             font: '30px Courier',
             fill: '#ffffff'
@@ -103,7 +103,7 @@ var lobbyState = {
     },
 
     startGame: function(){
-        console.log("LOBBY TRIGGER START GAME");
+        //console.log("LOBBY TRIGGER START GAME");
         game.state.start('play');
     }
 };
@@ -112,7 +112,7 @@ var playState = {
         playState.started = true;
         game.add.sprite( 0, 0, 'playTable');
         self = playState;
-        console.log("STARTING GAME");
+        //console.log("STARTING GAME");
         //this.dealCards();
         //x = (game.world.centerX - (cardWidth/2 ) );
         y = ( game.world.height - cardHeight + 60);
@@ -147,13 +147,13 @@ var playState = {
 
         tableCards.add(defaultCard);
         socket.emit('askCards');
-        console.log("ASK CARDS CLIENT");
+        //console.log("ASK CARDS CLIENT");
 
 
 
     },
     dealCards: function(data){
-    console.log("GOT "+data.length + " CARDS FROM THE SERVER");
+    //console.log("GOT "+data.length + " CARDS FROM THE SERVER");
         //items = new Phaser.Group(this.game, null, 'kaarten', true);
         items = game.add.group();
         //console.log(rectLeft);
@@ -163,9 +163,9 @@ var playState = {
             //    playState.actionOnClick();
 
             // So yeah
-            console.log(data[i][0]);
+            //console.log(data[i][0]);
             var cardKey = cardTranslator.translate(data[i]._value, data[i]._suit);
-            console.log(cardKey);
+            //console.log(cardKey);
             playState.giveCard(cardKey, data[i]._value, data[i]._suit);
         }
 
@@ -202,8 +202,8 @@ var playState = {
         //console.log(item);
         //items.create( x, y, item);
         var button = game.make.button(x, y, cardKey, playState.onCardClick);
-        button.value = value;
-        button.suit = suit;
+        button._value = value;
+        button._suit = suit;
         // Check to see if the card is already clicked
         button.active = false;
         items.add(button);
@@ -248,7 +248,7 @@ var playState = {
                 }
 
                 else if( n == currentView ){
-                    console.log("CANCER");
+                    //console.log("CANCER");
                     newCardX = 40;
                 }
 
@@ -322,7 +322,7 @@ var playState = {
     },
 
     checkView: function(){
-        console.log("Checking view");
+        //console.log("Checking view");
 
         // Hide all buttons by default
         rectRight.visible = false;
@@ -333,18 +333,18 @@ var playState = {
         if( items.length > cardsInView && (currentView + cardsInView) < items.length ){
             rectRight.visible = true;
             game.world.bringToTop(rectRight);
-            console.log('Show button right');
+            //console.log('Show button right');
         }
 
         if( items.length > cardsInView && currentView > 0){
             rectLeft.visible = true;
             game.world.bringToTop(rectLeft);
-            console.log('Show button left');
+            //console.log('Show button left');
         }
     },
 
     resetCardsActive: function(){
-        console.log('reset other active cards');
+        //console.log('reset other active cards');
         items.forEachExists(function (item) {
 
             //console.log(item.active);
@@ -355,21 +355,21 @@ var playState = {
         });
     },
     onClickTableCard: function(){
-        //console.log('Clicked on the table');
+
         var card = playState.getActiveCard();
 
        // console.log(card);
         if( card == null) {
             return false;
         }
-
+        console.log('Click table');
         if(self.clientSideCheckMove(card) ) {
-
+            console.log('check card');
             playState.addCardToTable(card);
-
+            //console.log(socket);
             socket.emit('move', {
-                value: card.value,
-                suit: card.suit
+                _value: card._value,
+                _suit: card._suit
             });
         }
 
@@ -413,7 +413,13 @@ var playState = {
             return false;
         }
 
+        var lastCard = self.getLastCard();
 
+        //console.log(lastCard);
+        if( !rules.check(card, lastCard)){
+            self.resetCardsActive();
+            return false;
+        }
 
         // Todo: check rules
         return true;
@@ -427,18 +433,27 @@ var playState = {
         tableCard.x = game.world.centerX - cardWidth / 2;
         tableCard.y = game.world.centerY - cardHeight / 2;
         tableCard.onInputDown.add(playState.onClickTableCard);
-        tableCard.value = card.value;
-        tableCard.suit = card.suit;
+        tableCard._value = card._value;
+        tableCard._suit = card._suit;
 
         tableCards.add(tableCard);
     },
 
     serverPlace: function(card){
 
-        console.log(card);
+        //console.log(card);
         card.key = cardTranslator.translate(card._value, card._suit);
 
         self.place(card);
+    },
+
+    getLastCard: function(){
+        var lastCard = tableCards.getChildAt( tableCards.length - 1);
+        //console.log(lastCard);
+        if(typeof lastCard._value == "undefined")
+            return null;
+
+        return lastCard;
     }
 };
 

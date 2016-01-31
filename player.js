@@ -31,11 +31,11 @@ Player.prototype.take = function(card){
 
         var handCard = this._hand[i];
 
-        if( handCard._value != card.value){
+        if( handCard._value != card._value){
             continue;
         }
 
-        else if( handCard._suit != card.suit){
+        else if( handCard._suit != card._suit){
             continue;
         }
 
@@ -65,7 +65,7 @@ Player.prototype.getHand = function(){
 Player.prototype.hasCard = function(card){
     // We receive the input from the client, so it's unsure if
     // we get the right data to check the card in hand
-    if( typeof card.value == "undefined" || typeof card.suit == "undefined")
+    if( typeof card._value == "undefined" || typeof card._suit == "undefined")
         return false;
 
     // Assume we have all the necessary data here
@@ -73,11 +73,11 @@ Player.prototype.hasCard = function(card){
 
         var handCard = this._hand[i];
 
-        if( handCard._value != card.value){
+        if( handCard._value != card._value){
             continue;
         }
 
-        else if( handCard._suit != card.suit){
+        else if( handCard._suit != card._suit){
             continue;
         }
 

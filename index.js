@@ -197,7 +197,7 @@ io.on('connection', function(socket) {
     });
 
     socket.on('move', function(card){
-
+        console.log('new move');
         if(typeof socket.player == "undefined" || !GameManager.isStarted())
             return false;
 
@@ -205,6 +205,7 @@ io.on('connection', function(socket) {
             socket.emit('falseMove', card);
             return false;
         }
+
 
         socket.broadcast.emit('placed', card);
 
