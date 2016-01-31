@@ -226,6 +226,7 @@ io.on('connection', function(socket) {
 
     socket.on('takeCard', function(){
         var cards = GameManager.takeCards(socket.player, 1);
+        GameManager.nextTurn();
         socket.emit('takenCards', cards);
     });
 

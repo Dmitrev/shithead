@@ -462,6 +462,8 @@ var playState = {
         return lastCard;
     },
     onClickDeckCard: function(){
+        if(!turn)
+            return false;
         socket.emit('takeCard');
         self.endTurn();
     },
