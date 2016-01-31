@@ -10,6 +10,7 @@ var Game = function(eventEmitter) {
   // The current game state
   this._started = false;
   this._players = [];
+  this._playersDone = [];
   this._deck = null;
   this._deckBuilder = new DeckBuilder();
   this._currentTurn = null;
@@ -137,11 +138,44 @@ Game.prototype.move = function(player, card){
     // Place card in the deck
     this._deck.place(card);
 
+    this.checkDone(player);
+
     return true;
 
 
 }
+// Get the only player that is not finished
+Game.prototype.getLoser = function(){
 
+    for( var i = 0; i < this._players.length; i++){
+        if( !this._players[i]._done){
+            return this._players[i];
+        }
+    }
+}
+
+Game.prototype.checkDone = function(player){
+    if(player.checkDone() ){
+        this._playersDone.push(player);
+    }
+}
+Game.prototype.allDone = function(){
+    var notDone = 0;
+
+    for( var i = 0; i < this._players.length; i++){
+        if( !this._players[i]._done){
+            notDone++;
+        }
+    }
+
+    // There are still more than one players who are not finished yet
+    if( notDone > 1){
+        return false;
+    }
+
+    return true;
+
+}
 
 
 module.exports = Game;

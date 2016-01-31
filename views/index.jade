@@ -98,6 +98,20 @@ html(lang="en")
                 $('#unready-btn').hide();
             }
 
+            function showGameEnd(playerList){
+                var el = $('#stopped').html('');
+                el.append('<h2>Game ended</h2>');
+                el.append('<ol></ol>');
+
+                var list = el.find('ol');
+
+                for( var i = 0; i < playerList.length; i++){
+                    list.append('<li>'+playerList[i]._nickname + '</li>');
+                }
+
+
+            }
+
             socket.on('newPlayer', function(data){
                 updateGUI(data);
             });
@@ -163,6 +177,9 @@ html(lang="en")
 
                 if( data.reason == 1){
                     el.text("The game has ended because there aren't enough players.");
+                }
+                else if( data.reason == 2){
+                    showGameEnd(data.playerList);
                 }
             });
 

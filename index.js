@@ -207,6 +207,17 @@ io.on('connection', function(socket) {
         }
 
         socket.broadcast.emit('placed', card);
+
+        if( GameManager.allDone() ){
+            // todo: End game
+            var playerList = GameManager._playersDone;
+            playerList.push( GameManager.getLoser() );
+
+            GameManager.stop();
+            io.sockets.emit('stopped', {reason:2, playerList: playerList});
+            return false
+        }
+
         GameManager.nextTurn();
         return true;
 

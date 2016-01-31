@@ -5,8 +5,9 @@ var Player = function(id, nickname, socketid){
     // Keep track if the player has pressed the ready button in lobby
     this._ready = false;
     this._socketid = socketid;
-
     this._inGame = false;
+    // Check if a player has placed al his cards
+    this._done = false;
 };
 
 Player.prototype.getNickname = function(){
@@ -30,11 +31,11 @@ Player.prototype.take = function(card){
 
         var handCard = this._hand[i];
 
-        if( handCard.value != card.value){
+        if( handCard._value != card.value){
             continue;
         }
 
-        else if( handCard.suit != card.suit){
+        else if( handCard._suit != card.suit){
             continue;
         }
 
@@ -83,5 +84,14 @@ Player.prototype.hasCard = function(card){
         return true;
 
     }
+}
+
+Player.prototype.checkDone = function(){
+    if( this._hand.length == 0){
+        this._done = true;
+        return true;
+    }
+
+    return false;
 }
 module.exports = Player;
