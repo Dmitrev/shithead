@@ -17,6 +17,10 @@ var GameManager =  new Game(eventEmitter);
 
 var nextUserId = 1;
 
+var timerWaitForPlayers = null;
+// Timeout in ms
+var timeoutTime = 30000;
+
 
 function getGameData(){
 
@@ -153,8 +157,43 @@ io.on('connection', function(socket) {
         dealCardsHandler(socket);
     });
 
+    socket.on('gotHand', function(){
+
+        if(typeof socket.player == "undefined" || !GameManager.isStarted())
+            return false;
+
+
+
+        socket.player._inGame = true;
+
+        // Count ready players
+        var players = GameManager.getPlayers();
+        var readyPlayers = 0;
+        for( var i = 0; i < players.length; i++){
+            if( players[i]._inGame){
+                readyPlayers++;
+            }
+        }
+
+
+
+        if( readyPlayers == players.length){
+            console.log('All players are ready to begin');
+
+            // Kill timeout function that kicks all inactive players
+            clearTimeout(timerWaitForPlayers);
+        }
+        else{
+            console.log(readyPlayers+' out of '+ players.length + ' players are ready');
+            console.log('wait for other players..');
+        }
+
+    });
+
 
 });
+
+
 
 // Let the client know that a player has left the game
 function playerLeftHandler(){
@@ -163,13 +202,50 @@ function playerLeftHandler(){
     io.sockets.emit('playerLeft', data);
 }
 
+// Once all the players receive cards, the server must know
+// When it's time to give the first player the turn
+// So we wait until all players are ready
+function waitForPlayersToStartGame (){
+
+   timerWaitForPlayers = setTimeout(
+       function() {
+           var players = GameManager.getPlayers();
+
+           for( var i = 0; i < players.length; i++){
+               if( !players[i]._inGame){
+                   var playerName = players[i]._nickname;
+                   var socketId = players[i]._socketid;
+                   GameManager.kickPlayerByIndex(i);
+                   console.log("Kicked player "+ playerName + " for being inactive");
+
+                   io.sockets.connected[socketId].emit('kicked');
+               }
+           }
+       },
+   timeoutTime);
+
+}
+
 eventEmitter.on('playerLeft', playerLeftHandler);
+eventEmitter.on('waitForPlayers', waitForPlayersToStartGame);
 
 // Let the client know that a new player joined the game
 eventEmitter.on('registerd', function(){
 
     var data = getGameData();
     io.sockets.emit ('newPlayer', data);
+
+});
+
+eventEmitter.on('nextTurn', function(player){
+
+    var socket = getSocket(player._socketid);
+    console.log(socket);
+    // Tell the players its his turn
+    socket.emit('giveTurn');
+
+    // Tell all the others that it's players turn
+    socket.broadcast.emit('newTurn', player);
 
 });
 
@@ -212,6 +288,14 @@ function dealCardsHandler(socket){
     //    var hand = client.player.getHand();
     //    socket.emit('giveHand', hand);
     //}
+}
+
+function getSocket(id){
+    for(var i = 0; i < sockets.length; i++){
+        if (id == sockets[i].id){
+            return sockets[i];
+        }
+    }
 }
 // Start the server
 http.listen(3000, function(){

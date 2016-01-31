@@ -2,8 +2,11 @@ var Player = function(id, nickname, socketid){
     this._id = id;
     this._nickname = nickname;
     this._hand = [];
+    // Keep track if the player has pressed the ready button in lobby
     this._ready = false;
     this._socketid = socketid;
+
+    this._inGame = false;
 };
 
 Player.prototype.getNickname = function(){

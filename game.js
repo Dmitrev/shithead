@@ -9,10 +9,10 @@ var Game = function(eventEmitter) {
 
   // The current game state
   this._started = false;
-
   this._players = [];
   this._deck = null;
   this._deckBuilder = new DeckBuilder();
+  this._currentTurn = null;
 }
 
 Game.prototype.addPlayer = function(player){
@@ -23,6 +23,9 @@ Game.prototype.start = function() {
     console.log("Game has been started");
     this._started = true;
     this.createDeck();
+    // Wait for all players to be ready
+    this._eventEmitter.emit('waitForPlayers');
+
 };
 
 // Create new Deck
@@ -75,6 +78,35 @@ Game.prototype.isStarted = function(){
     return this._started;
 }
 
+Game.prototype.nextTurn = function(){
+
+    var next = null;
+    if( this._currentTurn == null){
+        next = 0;
+    }
+    else{
+
+        next = ++this._currentTurn;
+        if( typeof this._players[next] == "undefined"){
+            next = 0;
+        }
+
+    }
+
+    if( typeof this._players[next] == "undefined"){
+        return false;
+    }
+
+    this._eventEmitter.emit('nextTurn', this._players[next]);
+    return true;
+}
+
+Game.prototype.kickPlayerByIndex = function(index){
+    if( typeof this._players[index] == "undefined")
+        return false;
+    this._players.splice(index, 1);
+    console.log()
+}
 
 
 module.exports = Game;

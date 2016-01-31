@@ -21,9 +21,12 @@ html(lang="en")
                             li= player._nickname
                                 if player._ready
                                   | (ready)
+                    button(id="ready-btn") Ready
+                    button(id="unready-btn") Not Ready
 
-                button(id="ready-btn") Ready
-                button(id="unready-btn") Not Ready
+                div(id="kicked")
+                    p You have been kicked from the game for being inactive, refresh your browser.
+
         script(src="/js/phaser.min.js")
         script(src="http://code.jquery.com/jquery-1.11.1.js")
         script(src="/socket.io/socket.io.js")
@@ -121,10 +124,26 @@ html(lang="en")
             socket.on('giveHand', function(data){
                 console.log("SOCKET: GIVE HAND");
                 playState.dealCards(data);
+                socket.emit('gotHand');
+            });
 
+            socket.on('giveTurn', function(){
+                console.log("it's your turn");
+                playState.yourTurn();
+            });
+
+            socket.on('newTurn', function(player){
+                console.log("I'ts "+player._nickname+"'s turn");
+            });
+
+            socket.on('kicked', function(){
+                $('#playerData').show();
+                $('#lobby').hide();
+                $('#kicked').show();
             });
 
             $(function(){
+
                 init();
 
                 $(document).on('click', '#ready-btn', function(){

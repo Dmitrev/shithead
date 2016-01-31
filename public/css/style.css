@@ -52,3 +52,7 @@ body{
 #lobby{
     display: none;
 }
+
+#kicked{
+    display:none;
+}

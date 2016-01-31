@@ -1,4 +1,5 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
+
 var sprite;
 var items;
 var button;
@@ -169,6 +170,17 @@ var playState = {
     },
 
     update: function(){
+
+    },
+
+    yourTurn: function(){
+        var turnText = game.add.text(game.world.centerX, 150, "It's your turn!", {
+            font: '30px Arial',
+            fill: '#ffffff'
+        });
+    },
+
+    newTurn: function(){
 
     },
 
