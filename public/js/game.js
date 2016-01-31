@@ -17,7 +17,7 @@ var rectRight = null;
 // Check if the it's the player's turn currently
 var turn = false;
 var turnText = null;
-
+var deckCard = null;
 var loadState = {
 
 
@@ -146,6 +146,11 @@ var playState = {
         defaultCard.alpha = 0;
 
         tableCards.add(defaultCard);
+
+        deckCard = game.add.button(0,0, 'back');
+        deckCard.x = game.world.width - cardWidth - 16;
+        deckCard.y = 14;
+
         socket.emit('askCards');
         //console.log("ASK CARDS CLIENT");
 
