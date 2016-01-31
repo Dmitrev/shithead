@@ -136,6 +136,7 @@ html(lang="en")
 
             socket.on('newTurn', function(player){
                 console.log("I'ts "+player._nickname+"'s turn");
+                playState.newTurn(player);
             });
 
             socket.on('kicked', function(){

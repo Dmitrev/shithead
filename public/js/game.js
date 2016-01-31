@@ -16,6 +16,7 @@ var rectLeft = null;
 var rectRight = null;
 // Check if the it's the player's turn currently
 var turn = false;
+var turnText = null;
 
 var loadState = {
 
@@ -176,15 +177,20 @@ var playState = {
 
     yourTurn: function(){
         turn = true;
+        self.renderTurnText("It's your turn!");
 
-        var turnText = game.add.text(game.world.centerX, 150, "It's your turn!", {
+    },
+
+    newTurn: function(player){
+        turn = false;
+        self.renderTurnText("it's "+player._nickname+"'s turn" );
+    },
+
+    renderTurnText: function(text){
+        turnText = game.add.text(game.world.centerX, 150, text, {
             font: '30px Arial',
             fill: '#ffffff'
         });
-    },
-
-    newTurn: function(){
-
     },
 
     giveCard: function(cardKey){
@@ -310,6 +316,7 @@ var playState = {
     },
 
     checkView: function(){
+        console.log("Checking view");
 
         // Hide all buttons by default
         rectRight.visible = false;
@@ -319,12 +326,14 @@ var playState = {
         // on right side of the screen then show the button
         if( items.length > cardsInView && (currentView + cardsInView) < items.length ){
             rectRight.visible = true;
-            //console.log('Show button right');
+            game.world.bringToTop(rectRight);
+            console.log('Show button right');
         }
 
         if( items.length > cardsInView && currentView > 0){
             rectLeft.visible = true;
-            //console.log('Show button left');
+            game.world.bringToTop(rectLeft);
+            console.log('Show button left');
         }
     },
 
