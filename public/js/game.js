@@ -12,9 +12,10 @@ var spacing = cardWidth;
 var cardsInView = 5;
 var currentView = 0;
 var tableCards = null;
-
 var rectLeft = null;
 var rectRight = null;
+// Check if the it's the player's turn currently
+var turn = false;
 
 var loadState = {
 
@@ -174,6 +175,8 @@ var playState = {
     },
 
     yourTurn: function(){
+        turn = true;
+
         var turnText = game.add.text(game.world.centerX, 150, "It's your turn!", {
             font: '30px Arial',
             fill: '#ffffff'
@@ -261,6 +264,11 @@ var playState = {
     },
 
     onCardClick: function(){
+
+        // Not your turn buddy!
+        if(!turn)
+            return false;
+
         if( this.active ){
             //console.log('Play this card');
             this.active = false;
@@ -358,7 +366,9 @@ var playState = {
     },
 
     addCardToTable: function(card) {
-
+        // Not your turn buddy
+        if(!turn)
+            return false;
 
         card.destroy();
 
