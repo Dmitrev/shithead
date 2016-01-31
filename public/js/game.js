@@ -150,6 +150,7 @@ var playState = {
         deckCard = game.add.button(0,0, 'back');
         deckCard.x = game.world.width - cardWidth - 16;
         deckCard.y = 14;
+        deckCard.onInputDown.add(playState.onClickDeckCard);
 
         socket.emit('askCards');
         //console.log("ASK CARDS CLIENT");
@@ -459,6 +460,27 @@ var playState = {
             return null;
 
         return lastCard;
+    },
+    onClickDeckCard: function(){
+        socket.emit('takeCard');
+        self.endTurn();
+    },
+
+    endTurn: function(){
+        turn = false;
+    },
+    takenCards: function(cards){
+        console.log(cards);
+        for( var i = 0; i < cards.length; i++){
+            // For some reason this doesn't work :/
+            //    playState.actionOnClick();
+
+            // So yeah
+            //console.log(data[i][0]);
+            var cardKey = cardTranslator.translate(cards[i]._value, cards[i]._suit);
+            //console.log(cardKey);
+            playState.giveCard(cardKey, cards[i]._value, cards[i]._suit);
+        }
     }
 };
 

@@ -182,5 +182,16 @@ Game.prototype.allDone = function(){
 
 }
 
+Game.prototype.takeCards = function(player, amount) {
+
+    var cards = this._deck.take(1);
+    for( var i = 0; i < amount; i++ ){
+
+        player.give(cards[i]);
+    }
+
+    return cards;
+}
+
 
 module.exports = Game;
