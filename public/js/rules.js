@@ -27,7 +27,7 @@ var rules = {
     },
 
     sameValue: function(card, lastCard){
-        if( card._value){
+        if( card._value != lastCard._value){
             return false;
         }
 
