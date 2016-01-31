@@ -202,8 +202,8 @@ var playState = {
         //console.log(item);
         //items.create( x, y, item);
         var button = game.make.button(x, y, cardKey, playState.onCardClick);
-        button.value = value;
-        button.suit = suit;
+        button._value = value;
+        button._suit = suit;
         // Check to see if the card is already clicked
         button.active = false;
         items.add(button);
@@ -368,8 +368,8 @@ var playState = {
             playState.addCardToTable(card);
 
             socket.emit('move', {
-                value: card.value,
-                suit: card.suit
+                value: card._value,
+                suit: card._suit
             });
         }
 
@@ -427,8 +427,8 @@ var playState = {
         tableCard.x = game.world.centerX - cardWidth / 2;
         tableCard.y = game.world.centerY - cardHeight / 2;
         tableCard.onInputDown.add(playState.onClickTableCard);
-        tableCard.value = card.value;
-        tableCard.suit = card.suit;
+        tableCard._value = card._value;
+        tableCard._suit = card._suit;
 
         tableCards.add(tableCard);
     },
