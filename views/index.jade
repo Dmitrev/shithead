@@ -145,6 +145,16 @@ html(lang="en")
                 $('#kicked').show();
             });
 
+            socket.on('falseMove', function(){
+                // Todo: reset move
+
+            });
+
+            socket.on('placed', function(card){
+                // Render card for others
+                playState.serverPlace(card);
+            });
+
             socket.on('stopped', function(data){
                 $('#playerData').show();
                 $('#lobby').hide();

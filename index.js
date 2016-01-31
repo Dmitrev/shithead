@@ -196,6 +196,22 @@ io.on('connection', function(socket) {
 
     });
 
+    socket.on('move', function(card){
+
+        if(typeof socket.player == "undefined" || !GameManager.isStarted())
+            return false;
+
+        if( !GameManager.move(socket.player, card) ){
+            socket.emit('falseMove', card);
+            return false;
+        }
+
+        socket.broadcast.emit('placed', card);
+        GameManager.nextTurn();
+        return true;
+
+    });
+
 
 });
 

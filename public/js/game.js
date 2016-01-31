@@ -166,7 +166,7 @@ var playState = {
             console.log(data[i][0]);
             var cardKey = cardTranslator.translate(data[i]._value, data[i]._suit);
             console.log(cardKey);
-            playState.giveCard(cardKey);
+            playState.giveCard(cardKey, data[i]._value, data[i]._suit);
         }
 
     },
@@ -187,17 +187,23 @@ var playState = {
     },
 
     renderTurnText: function(text){
+
+        if( turnText != null)
+            turnText.destroy();
+
         turnText = game.add.text(game.world.centerX, 150, text, {
             font: '30px Arial',
             fill: '#ffffff'
         });
     },
 
-    giveCard: function(cardKey){
+    giveCard: function(cardKey, value, suit){
 
         //console.log(item);
         //items.create( x, y, item);
         var button = game.make.button(x, y, cardKey, playState.onCardClick);
+        button.value = value;
+        button.suit = suit;
         // Check to see if the card is already clicked
         button.active = false;
         items.add(button);
@@ -357,8 +363,15 @@ var playState = {
             return false;
         }
 
-        playState.addCardToTable(card);
+        if(self.clientSideCheckMove(card) ) {
 
+            playState.addCardToTable(card);
+
+            socket.emit('move', {
+                value: card.value,
+                suit: card.suit
+            });
+        }
 
     },
 
@@ -379,16 +392,10 @@ var playState = {
         if(!turn)
             return false;
 
+
+        self.place(card);
+
         card.destroy();
-
-        var tableCard = game.add.button(0,0, card.key);
-        tableCard.width = 140;
-        tableCard.height = 190;
-        tableCard.x = game.world.centerX - cardWidth / 2;
-        tableCard.y = game.world.centerY - cardHeight / 2;
-
-        tableCard.onInputDown.add(playState.onClickTableCard);
-        tableCards.add(tableCard);
         playState.shiftCards();
     },
     resetCardsPlacement: function(){
@@ -397,6 +404,41 @@ var playState = {
             item.x = x;
             x+= spacing;
         });
+    },
+
+    clientSideCheckMove: function(card){
+
+        if(!turn) {
+            self.resetCardsActive();
+            return false;
+        }
+
+
+
+        // Todo: check rules
+        return true;
+
+    },
+
+    place: function(card){
+        var tableCard = game.add.button(0,0, card.key);
+        tableCard.width = 140;
+        tableCard.height = 190;
+        tableCard.x = game.world.centerX - cardWidth / 2;
+        tableCard.y = game.world.centerY - cardHeight / 2;
+        tableCard.onInputDown.add(playState.onClickTableCard);
+        tableCard.value = card.value;
+        tableCard.suit = card.suit;
+
+        tableCards.add(tableCard);
+    },
+
+    serverPlace: function(card){
+
+        console.log(card);
+        card.key = cardTranslator.translate(card._value, card._suit);
+
+        self.place(card);
     }
 };
 

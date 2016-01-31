@@ -24,8 +24,23 @@ Player.prototype.give = function(cards) {
     }
 }
 
-Player.prototype.showHand = function(){
-    console.log(this._hand);
+Player.prototype.take = function(card){
+
+    for(var i = 0; i < this._hand.length; i++){
+
+        var handCard = this._hand[i];
+
+        if( handCard.value != card.value){
+            continue;
+        }
+
+        else if( handCard.suit != card.suit){
+            continue;
+        }
+
+        this._hand.splice(i, 1);
+
+    }
 }
 
 Player.prototype.ready = function () {
@@ -44,5 +59,29 @@ Player.prototype.isReady = function(){
 
 Player.prototype.getHand = function(){
     return this._hand;
+}
+
+Player.prototype.hasCard = function(card){
+    // We receive the input from the client, so it's unsure if
+    // we get the right data to check the card in hand
+    if( typeof card.value == "undefined" || typeof card.suit == "undefined")
+        return false;
+
+    // Assume we have all the necessary data here
+    for(var i = 0; i < this._hand.length; i++){
+
+        var handCard = this._hand[i];
+
+        if( handCard._value != card.value){
+            continue;
+        }
+
+        else if( handCard._suit != card.suit){
+            continue;
+        }
+
+        return true;
+
+    }
 }
 module.exports = Player;

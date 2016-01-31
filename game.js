@@ -97,6 +97,7 @@ Game.prototype.nextTurn = function(){
         return false;
     }
 
+    this._currentTurn = next;
     this._eventEmitter.emit('nextTurn', this._players[next]);
     return true;
 }
@@ -114,10 +115,33 @@ Game.prototype.stop = function(){
 
 // Give the first turn to a random player
 Game.prototype.firstTurn = function(){
-    var randomPlayer = this._players[Math.floor(Math.random()*this._players.length)];
-
+    var randomIndex = Math.floor(Math.random()*this._players.length);
+    var randomPlayer = this._players[randomIndex];
+    this._currentTurn = randomIndex;
     this._eventEmitter.emit('nextTurn', randomPlayer);
 }
+
+Game.prototype.move = function(player, card){
+
+    // User actually has the card
+    var playerHasCard = player.hasCard(card);
+
+    if( !playerHasCard ){
+        console.log(player._nickname + " tried to place a card he/she does not have");
+        return false;
+    }
+
+    // Take the card from the player
+    player.take(card);
+
+    // Place card in the deck
+    this._deck.place(card);
+
+    return true;
+
+
+}
+
 
 
 module.exports = Game;
