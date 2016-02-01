@@ -189,12 +189,15 @@ html(lang="en")
                 playState.takenCards(cards);
             });
 
-            socket.on('reshuffle', function(){
-                playState.reshuffle();
+            socket.on('reshuffle', function(lastCard){
+                playState.reshuffle(lastCard);
             });
 
             socket.on('noCardsLeft', function(){
-                console.log('noCardsLeft');
+
+                // Remove cards from table
+                //playState.reshuffle();
+
             });
 
             $(function(){

@@ -313,12 +313,12 @@ eventEmitter.on('nextTurn', function(player){
 
 });
 
-eventEmitter.on('reshuffle', function(){
-    io.sockets.emit('reshuffle');
+eventEmitter.on('reshuffle', function(lastCard){
+    io.sockets.emit('reshuffle', lastCard);
 });
 
 eventEmitter.on('noCardsLeft', function(player){
-    io.sockets.connected[player._socketid].emit('noCardsLeft');
+    io.sockets.emit('noCardsLeft');
 });
 
 //eventEmitter.on('dealCards', dealCardsHandler);

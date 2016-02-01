@@ -437,7 +437,7 @@ var playState = {
 
     serverPlace: function(card){
 
-        //console.log(card);
+        console.log(card);
         card.key = cardTranslator.translate(card._value, card._suit);
 
         self.place(card);
@@ -475,7 +475,7 @@ var playState = {
         }
         self.endTurn();
     },
-    reshuffle: function(){
+    reshuffle: function(lastCard){
         if( tableCards != null){
             tableCards.destroy();
         }
@@ -491,6 +491,9 @@ var playState = {
         defaultCard.alpha = 0;
 
         tableCards.add(defaultCard);
+        if( lastCard != null) {
+            self.serverPlace(lastCard);
+        }
     }
 };
 

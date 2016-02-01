@@ -1,6 +1,7 @@
-var Deck = function( cards ){
+var Deck = function( cards, eventEmitter ){
   this._cards = cards;
   this._graveYard = [];
+  this._eventEmitter = eventEmitter;
 }
 
 
@@ -82,11 +83,20 @@ Deck.prototype.reshuffleCards = function(){
     return false;
   }
 
-  for( var i = 0; i < this._graveYard.length; i++){
-    this._cards.push(this._graveYard[i]);
-  }
-  this._graveYard = [];
 
+  // Put back all cards except the last
+  for( var i = 0; i < this._graveYard.length - 1; i++){
+    this._cards.push(this._graveYard[i]);
+    this._graveYard.splice(i, 1);
+  }
+
+  var lastCard = null;
+  if( typeof this._graveYard[0] != "undefined" ) {
+    lastCard = this._graveYard[0];
+  }
+  console.log("lastCard: ");
+  console.log(lastCard);
+  this._eventEmitter.emit('reshuffle', lastCard);
   this.shuffle();
 
   if( this._cards.length > 0) {
