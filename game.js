@@ -139,6 +139,8 @@ Game.prototype.firstTurn = function(){
 
 Game.prototype.move = function(player, card){
 
+
+
     // User actually has the card
     var playerHasCard = player.hasCard(card);
 
@@ -149,6 +151,9 @@ Game.prototype.move = function(player, card){
 
 
     if( !this._jackActive ) {
+
+        this._endTurn = true;
+
         if (!rules.check(card, this._deck.getLastCard(), rules)) {
             console.log(player._nickname + " tried to place a card against the rules");
             return false;
@@ -279,6 +284,11 @@ Game.prototype.triggerSpecialEffect = function(card, player){
         console.log('next player has debt of '+this._debt);
         this.messageNextPlayer('debt');
     }
+
+    else if( card._value == 7){
+        this._endTurn = false;
+    }
+
     else if (card._value == 11){
         this._endTurn = false;
         this._jackActive = true;
