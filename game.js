@@ -135,6 +135,14 @@ Game.prototype.move = function(player, card){
     }
 
 
+    if( player.getHand().length == 1){
+        if( [0,1,2,7,8,11].indexOf(card._value) != -1){
+            console.log("can't end game with a special card");
+            return false;
+        }
+
+    }
+
     if( !this._jackActive ) {
 
         this._endTurn = true;
@@ -216,7 +224,7 @@ Game.prototype.allDone = function(){
 }
 
 Game.prototype.takeCards = function(player, amount) {
-
+    this._endTurn = true;
     var cards = this._deck.take(amount);
 
     if( cards == null || cards.length == 0){

@@ -502,6 +502,15 @@ var playState = {
             }
         }
 
+        // Cannot end with special card
+        if( items.length == 1){
+            if( [0,1,2,7,8,11].indexOf(card._value) != -1){
+                self.resetCardsActive();
+                return false;
+            }
+
+        }
+
         // Todo: check rules
         return true;
 
