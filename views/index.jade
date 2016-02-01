@@ -212,7 +212,7 @@ html(lang="en")
             });
 
             socket.on('suitSet', function(suit){
-                console.log('jacksuit: '+suit);
+                playState.showSuitButton(suit);
             });
 
             $(function(){

@@ -1,5 +1,6 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
 
+
 var sprite;
 var items;
 var button;
@@ -154,18 +155,22 @@ var playState = {
         var button;
 
         button = game.add.button(70,70 , 'btnClubs');
+        button._suit = 'clubs';
         button.onInputDown.add(playState.onClickSuitClubs);
         suitsButtons.add(button);
 
         button = game.add.button(10,70, 'btnDiamonds');
+        button._suit = 'diamonds';
         button.onInputDown.add(playState.onClickSuitDiamonds);
         suitsButtons.add(button);
 
         button = game.add.button(70,10, 'btnHearts');
+        button._suit = 'hearts';
         button.onInputDown.add(playState.onClickSuitHearts);
         suitsButtons.add(button);
 
         button = game.add.button(10,10, 'btnSpades');
+        button._suit = 'spades';
         button.onInputDown.add(playState.onClickSuitSpades);
         suitsButtons.add(button);
 
@@ -610,6 +615,7 @@ var playState = {
 
     onClickSuitButton: function(suit){
         socket.emit('setSuit', suit);
+        self.hideSuitsButtons();
     },
 
     onClickSuitClubs: function(){
@@ -627,11 +633,33 @@ var playState = {
 
     showSuitsButtons: function(){
         turn = false;
+        suitsButtons.forEach( function(item){
+            item.visible = true;
+        } );
+
+        suitsButtons.visible = true;
         suitsButtons.visible = true;
     },
 
     hideSuitsButtons: function(){
+
+        suitsButtons.forEach( function(){
+            item.visible = false;
+        } );
+
         suitsButtons.visible = false;
+    },
+
+    showSuitButton: function(suit){
+        suitsButtons.forEach( function(item){
+            if( item._suit == suit){
+                item.visible = true;
+                return false;
+            }
+            item.visible = false;
+        } );
+
+        suitsButtons.visible = true;
     }
 };
 
