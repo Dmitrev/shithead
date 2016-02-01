@@ -455,7 +455,7 @@ var playState = {
         if(!turn)
             return false;
         socket.emit('takeCard');
-        self.endTurn();
+
     },
 
     endTurn: function(){
@@ -473,6 +473,7 @@ var playState = {
             //console.log(cardKey);
             playState.giveCard(cardKey, cards[i]._value, cards[i]._suit);
         }
+        self.endTurn();
     },
     reshuffle: function(){
         if( tableCards != null){
