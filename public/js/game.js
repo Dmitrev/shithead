@@ -519,8 +519,8 @@ var playState = {
             skipTurn = game.add.button(0, 0, 'skipTurn');
             skipTurn.x = game.world.width - cardWidth - 150;
             skipTurn.y = 280;
-            skipTurn.onInputDown.add(function () {
-                alert('skip turn');
+            skipTurn.onInputDown.add(function(){
+                socket.emit('skipTurn');
             });
         }
     },

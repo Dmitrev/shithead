@@ -205,5 +205,23 @@ Game.prototype.takeCards = function(player, amount) {
     return cards;
 }
 
+Game.prototype.skipTurn = function(player){
+
+    var currentTurnPlayer = null;
+
+    if( typeof this._players[ this._currentTurn ] != "undefined"){
+        currentTurnPlayer = this._players[ this._currentTurn ];
+    }
+
+    if( currentTurnPlayer._socketid != player._socketid){
+        return false;
+    }
+
+    if( !this._deck.isEmpty()){
+        return false;
+    }
+
+    this.nextTurn();
+}
 
 module.exports = Game;

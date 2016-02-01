@@ -232,6 +232,10 @@ io.on('connection', function(socket) {
         }
     });
 
+    socket.on('skipTurn', function(){
+        GameManager.skipTurn(socket.player);
+    });
+
 
 });
 
