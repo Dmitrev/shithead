@@ -7,7 +7,7 @@ var DeckBuilder = function() {
   this._playerCount = -1;
 
   // Cards per suit (hearts, diamonds, clubs, spades)
-  this._cardsPerSuit = 13;
+  this._cardsPerSuit = 4;
 
   // The amount of players that can play with 1 deck
   // If got more than 5 players we need 2 decks

@@ -20,6 +20,9 @@ Player.prototype.getId = function(){
 
 Player.prototype.give = function(cards) {
 
+    if( cards == null || typeof cards.length == "undefined")
+        return false;
+
     for(var i = 0; i < cards.length; i++) {
         this._hand.push(cards[i]);
     }

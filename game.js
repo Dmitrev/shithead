@@ -35,7 +35,7 @@ Game.prototype.createDeck = function() {
     this._deckBuilder.setPlayerCount(this._players.length);
     var cards = this._deckBuilder.build();
 
-    this._deck = new Deck(cards);
+    this._deck = new Deck(cards, this._eventEmitter);
 
     this.shuffleCards();
     this.dealCards();
@@ -184,8 +184,15 @@ Game.prototype.allDone = function(){
 
 Game.prototype.takeCards = function(player, amount) {
 
-    var cards = this._deck.take(1);
-    for( var i = 0; i < amount; i++ ){
+    var cards = this._deck.take(amount);
+
+    if( cards == null || cards.length == 0){
+        this._eventEmitter.emit('noCardsLeft', player);
+        return false;
+    }
+
+
+    for( var i = 0; i < cards.length; i++ ){
 
         player.give(cards[i]);
     }

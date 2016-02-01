@@ -135,17 +135,7 @@ var playState = {
         rectRight.alpha = 0;
         rectRight.visible = false;
 
-        tableCards = game.add.group();
-        // Add an empty card to have something clickable if the table is empty
-        var defaultCard = game.add.button(0,0);
-        defaultCard.width = 140;
-        defaultCard.height = 190;
-        defaultCard.x = game.world.centerX - cardWidth / 2;
-        defaultCard.y = game.world.centerY - cardHeight / 2;
-        defaultCard.onInputDown.add(playState.onClickTableCard);
-        defaultCard.alpha = 0;
-
-        tableCards.add(defaultCard);
+        self.reshuffle();
 
         deckCard = game.add.button(0,0, 'back');
         deckCard.x = game.world.width - cardWidth - 16;
@@ -483,6 +473,23 @@ var playState = {
             //console.log(cardKey);
             playState.giveCard(cardKey, cards[i]._value, cards[i]._suit);
         }
+    },
+    reshuffle: function(){
+        if( tableCards != null){
+            tableCards.destroy();
+        }
+
+        tableCards = game.add.group();
+        // Add an empty card to have something clickable if the table is empty
+        var defaultCard = game.add.button(0,0);
+        defaultCard.width = 140;
+        defaultCard.height = 190;
+        defaultCard.x = game.world.centerX - cardWidth / 2;
+        defaultCard.y = game.world.centerY - cardHeight / 2;
+        defaultCard.onInputDown.add(playState.onClickTableCard);
+        defaultCard.alpha = 0;
+
+        tableCards.add(defaultCard);
     }
 };
 

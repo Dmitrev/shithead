@@ -226,8 +226,10 @@ io.on('connection', function(socket) {
 
     socket.on('takeCard', function(){
         var cards = GameManager.takeCards(socket.player, 1);
-        GameManager.nextTurn();
-        socket.emit('takenCards', cards);
+        if( cards != false) {
+            GameManager.nextTurn();
+            socket.emit('takenCards', cards);
+        }
     });
 
 
@@ -309,6 +311,14 @@ eventEmitter.on('nextTurn', function(player){
     // Tell all the others that it's players turn
     socket.broadcast.emit('newTurn', player);
 
+});
+
+eventEmitter.on('reshuffle', function(){
+    io.sockets.emit('reshuffle');
+});
+
+eventEmitter.on('noCardsLeft', function(player){
+    io.sockets.connected[player._socketid].emit('noCardsLeft');
 });
 
 //eventEmitter.on('dealCards', dealCardsHandler);

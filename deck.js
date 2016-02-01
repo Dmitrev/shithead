@@ -40,6 +40,8 @@ Deck.prototype.take = function(amount){
     if( card == null )
       break;
 
+    if( !card)
+      break;
     cardsTaken.push(card);
   }
 
@@ -48,8 +50,11 @@ Deck.prototype.take = function(amount){
 
 Deck.prototype.takeOne = function(){
 
-  if( this.isEmpty() )
-    return null;
+  if( this.isEmpty() ){
+
+    return this.reshuffleCards();
+  }
+
 
   return this._cards.pop();
 
@@ -67,6 +72,26 @@ Deck.prototype.getLastCard = function(){
     return null;
 
   return this._graveYard[ this._graveYard.length-1 ];
+}
+
+Deck.prototype.reshuffleCards = function(){
+  console.log('Deck is empty, shuffling cards');
+
+  if( this._graveYard.length == 0){
+    console.log('no cards in graveYard');
+    return false;
+  }
+
+  for( var i = 0; i < this._graveYard.length; i++){
+    this._cards.push(this._graveYard[i]);
+  }
+  this._graveYard = [];
+
+  this.shuffle();
+
+  if( this._cards.length > 0) {
+    return this._cards.pop();
+  }
 }
 
 module.exports = Deck;
