@@ -306,6 +306,7 @@ eventEmitter.on('registerd', function(){
 });
 
 eventEmitter.on('nextTurn', function(player){
+    console.log('next turn is for player: '+player._nickname);
 
     var socket = getSocket(player._socketid);
     ///console.log(socket);
@@ -327,6 +328,13 @@ eventEmitter.on('noCardsLeft', function(){
 
 eventEmitter.on('deckEmpty', function(){
     io.sockets.emit('noCardsLeft');
+});
+
+eventEmitter.on('messageNextPlayer', function(data){
+
+    if( data.event == "debt"){
+        io.sockets.connected[data.nextPlayer._socketid].emit('debt');
+    }
 });
 //eventEmitter.on('dealCards', dealCardsHandler);
 //

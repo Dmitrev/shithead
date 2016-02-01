@@ -14,6 +14,9 @@ var Game = function(eventEmitter) {
   this._deck = null;
   this._deckBuilder = new DeckBuilder();
   this._currentTurn = null;
+
+   // The amount of cards a player must take (triggerd by special effect card)
+  this._debt = 0;
 }
 
 Game.prototype.addPlayer = function(player){
@@ -132,7 +135,8 @@ Game.prototype.move = function(player, card){
         return false;
     }
 
-    if( !rules.check(card, this._deck.getLastCard() ) ){
+    console.log(rules.check);
+    if( !rules.check(card, this._deck.getLastCard(), rules ) ){
         console.log(player._nickname + " tried to place a card against the rules");
         return false;
     }
@@ -144,6 +148,8 @@ Game.prototype.move = function(player, card){
     this._deck.place(card);
 
     this.checkDone(player);
+
+    this.triggerSpecialEffect(card);
 
     return true;
 
@@ -222,6 +228,50 @@ Game.prototype.skipTurn = function(player){
     }
 
     this.nextTurn();
+}
+
+Game.prototype.triggerSpecialEffect = function(card){
+
+    if( card._value == 2){
+        this._debt += 2;
+        console.log('next player has debt of '+this._debt);
+
+        this.messageNextPlayer('debt');
+    }
+    else if( card._value == 0){
+        this._debt += 5;
+        console.log('next player has debt of '+this._debt);
+        this.messageNextPlayer('debt');
+    }
+
+}
+
+Game.prototype.messageNextPlayer = function(event, data){
+    var next = null;
+    if( this._currentTurn == null){
+        next = 0;
+    }
+    else{
+
+        next = this._currentTurn + 1;
+        if( typeof this._players[next] == "undefined"){
+            next = 0;
+        }
+
+    }
+
+    if( typeof this._players[next] == "undefined"){
+        return false;
+    }
+
+    var nextPlayer = this._players[next];
+
+    this._eventEmitter.emit('messageNextPlayer', {
+        event: event,
+        nextPlayer: nextPlayer,
+        data: data
+    });
+    return true;
 }
 
 module.exports = Game;

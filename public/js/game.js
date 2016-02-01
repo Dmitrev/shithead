@@ -19,7 +19,8 @@ var turn = false;
 var turnText = null;
 var deckCard = null;
 var skipTurn = null;
-
+var takeCards = null;
+var hasDebt = false;
 var loadState = {
 
 
@@ -33,6 +34,7 @@ var loadState = {
         game.load.image('backgroundLobby','/images/background-lobby.jpg');
         game.load.image('playTable','/images/play-table.jpg');
         game.load.image('skipTurn','/images/skip-turn.png');
+        game.load.image('takeCards','/images/take-cards.png');
         game.load.image('back','/images/cardBack_red2.png');
         game.load.image('clubs2','/images/cardClubs2.png');
         game.load.image('clubs3','/images/cardClubs3.png');
@@ -389,7 +391,6 @@ var playState = {
         if(!turn)
             return false;
 
-
         self.place(card);
 
         card.destroy();
@@ -409,6 +410,15 @@ var playState = {
             self.resetCardsActive();
             return false;
         }
+
+        // If player has a debt than prevent him to place any others cards until debt is payed
+        if( hasDebt ){
+            if( card._value != 0 && card._value != 2){
+                self.resetCardsActive();
+                return false;
+            }
+        }
+
 
         var lastCard = self.getLastCard();
 
@@ -529,6 +539,28 @@ var playState = {
         if( skipTurn != null){
             skipTurn.destroy();
         }
+    },
+
+    addTakeCardsButton: function(){
+
+            takeCards = game.add.button(0, 0, 'takeCards');
+            takeCards.x = game.world.width - cardWidth - 150;
+            takeCards.y = 340;
+            takeCards.onInputDown.add(function(){
+                socket.emit('takeCards');
+            });
+
+    },
+
+    removeTakeCardsButton: function(){
+        if( takeCards != null){
+            takeCards.destroy();
+        }
+    },
+
+    hasDebt: function(){
+        hasDebt = true;
+        this.addTakeCardsButton();
     }
 };
 

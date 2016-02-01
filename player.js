@@ -68,8 +68,18 @@ Player.prototype.getHand = function(){
 Player.prototype.hasCard = function(card){
     // We receive the input from the client, so it's unsure if
     // we get the right data to check the card in hand
-    if( typeof card._value == "undefined" || typeof card._suit == "undefined")
+    console.log('check: ', card._suit, card._value);
+
+    if( typeof card._value == "undefined" ) {
+        console.log('NO VALUE');
         return false;
+    }
+
+    // Added to make the joker card compatible
+    if( card._value != 0 && typeof card._suit == "undefined") {
+        console.log('No suit found with value of ' +card._value);
+        return false;
+    }
 
     // Assume we have all the necessary data here
     for(var i = 0; i < this._hand.length; i++){
@@ -77,10 +87,12 @@ Player.prototype.hasCard = function(card){
         var handCard = this._hand[i];
 
         if( handCard._value != card._value){
+            console.log('Not same value', card._value, handCard._value);
             continue;
         }
 
-        else if( handCard._suit != card._suit){
+        else if( typeof handCard._suit != "undefined" && handCard._suit != card._suit){
+            console.log('Not same suit', card._suit, handCard._suit);
             continue;
         }
 
