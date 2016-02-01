@@ -97,34 +97,9 @@ Game.prototype.nextTurn = function(){
     if( !this._endTurn )
         return false;
 
-    var next = null;
-    if( this._currentTurn == null){
-        next = 0;
-    }
-    else{
+    this.setNextTurn();
 
-        if( !this._rotationReversed ) {
-
-            next = ++this._currentTurn;
-            if (typeof this._players[next] == "undefined") {
-                next = 0;
-            }
-        }
-        else{
-            next = --this._currentTurn;
-            if (typeof this._players[next] == "undefined") {
-                next = this._players.length - 1;
-            }
-        }
-
-    }
-
-    if( typeof this._players[next] == "undefined"){
-        return false;
-    }
-
-    this._currentTurn = next;
-    this._eventEmitter.emit('nextTurn', this._players[next]);
+    this._eventEmitter.emit('nextTurn', this._players[this._currentTurn]);
     return true;
 }
 
@@ -307,6 +282,9 @@ Game.prototype.triggerSpecialEffect = function(card, player){
     else if( card._value == 1){
         this.flipRotation();
     }
+    else if( card._value == 8){
+        this.setNextTurn();
+    }
 
 }
 
@@ -371,5 +349,35 @@ Game.prototype.setSuit = function(suit){
      }
      this._rotationReversed = true;
  }
+
+Game.prototype.setNextTurn = function(){
+    var next = null;
+    if( this._currentTurn == null){
+        next = 0;
+    }
+    else{
+
+        if( !this._rotationReversed ) {
+
+            next = ++this._currentTurn;
+            if (typeof this._players[next] == "undefined") {
+                next = 0;
+            }
+        }
+        else{
+            next = --this._currentTurn;
+            if (typeof this._players[next] == "undefined") {
+                next = this._players.length - 1;
+            }
+        }
+
+    }
+
+    if( typeof this._players[next] == "undefined"){
+        return false;
+    }
+
+    this._currentTurn = next;
+}
 
 module.exports = Game;
