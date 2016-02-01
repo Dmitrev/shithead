@@ -207,6 +207,10 @@ html(lang="en")
                 playState.paidDebt(cards);
             });
 
+            socket.on('chooseSuit', function(){
+                playState.showSuitsButtons();
+            });
+
             $(function(){
 
                 init();

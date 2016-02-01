@@ -15,6 +15,15 @@ var Game = function(eventEmitter) {
   this._deckBuilder = new DeckBuilder();
   this._currentTurn = null;
 
+  // End turn after placing card (modified by special effect)
+  this._endTurn = true;
+
+  // Check if jack card effect is active
+  this._jackActive = false;
+
+  // The suit that is chosen by player with Jack Effect
+  this._jackSuit = null;
+
    // The amount of cards a player must take (triggerd by special effect card)
   this._debt = 0;
 }
@@ -83,6 +92,9 @@ Game.prototype.isStarted = function(){
 }
 
 Game.prototype.nextTurn = function(){
+
+    if( !this._endTurn )
+        return false;
 
     var next = null;
     if( this._currentTurn == null){
@@ -157,7 +169,7 @@ Game.prototype.move = function(player, card){
 
     this.checkDone(player);
 
-    this.triggerSpecialEffect(card);
+    this.triggerSpecialEffect(card, player);
 
     return true;
 
@@ -237,7 +249,7 @@ Game.prototype.skipTurn = function(player){
     this.nextTurn();
 }
 
-Game.prototype.triggerSpecialEffect = function(card){
+Game.prototype.triggerSpecialEffect = function(card, player){
 
     if( card._value == 2){
         this._debt += 2;
@@ -249,6 +261,11 @@ Game.prototype.triggerSpecialEffect = function(card){
         this._debt += 5;
         console.log('next player has debt of '+this._debt);
         this.messageNextPlayer('debt');
+    }
+    else if (card._value == 11){
+        this._endTurn = false;
+        this._jackActive = true;
+        this._eventEmitter.emit('chooseSuit', player);
     }
 
 }

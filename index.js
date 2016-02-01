@@ -343,8 +343,11 @@ eventEmitter.on('messageNextPlayer', function(data){
         io.sockets.connected[data.nextPlayer._socketid].emit('debt');
     }
 });
-//eventEmitter.on('dealCards', dealCardsHandler);
-//
+
+eventEmitter.on('chooseSuit', function(player){
+    io.sockets.connected[player._socketid].emit('chooseSuit');
+});
+
 function dealCardsHandler(socket){
 
     var players = GameManager.getPlayers();
@@ -361,29 +364,6 @@ function dealCardsHandler(socket){
 
         }
     }
-
-
-    //for (var client in clients) {
-    //    console.log(client);
-    //    // Check is important, because the object has also prototype properties
-    //    if (clients.hasOwnProperty(client)) {
-    //
-    //        console.log(client.player);
-    //
-    //
-    //        console.log('Give hand to '+ client.player._nickname);
-    //        var hand = client.player.getHand();
-    //        //client.emit('giveHand', hand);
-    //    }
-    //}
-    //io.sockets.emit('giveHand', clients);
-    //console.log(clients.connected.player);
-    //for( var i = 0; i < clients.length; i++){
-    //    var client = clients[i];
-    //    console.log('Give hand to '+ client.player._nickname);
-    //    var hand = client.player.getHand();
-    //    socket.emit('giveHand', hand);
-    //}
 }
 
 function getSocket(id){
