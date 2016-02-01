@@ -18,6 +18,8 @@ var rectRight = null;
 var turn = false;
 var turnText = null;
 var deckCard = null;
+var skipTurn = null;
+
 var loadState = {
 
 
@@ -30,6 +32,7 @@ var loadState = {
 
         game.load.image('backgroundLobby','/images/background-lobby.jpg');
         game.load.image('playTable','/images/play-table.jpg');
+        game.load.image('skipTurn','/images/skip-turn.png');
         game.load.image('back','/images/cardBack_red2.png');
         game.load.image('clubs2','/images/cardClubs2.png');
         game.load.image('clubs3','/images/cardClubs3.png');
@@ -171,12 +174,13 @@ var playState = {
     yourTurn: function(){
         turn = true;
         self.renderTurnText("It's your turn!");
-
+        self.addSkipButton();
     },
 
     newTurn: function(player){
         turn = false;
         self.renderTurnText("it's "+player._nickname+"'s turn" );
+        self.removeSkipButton();
     },
 
     renderTurnText: function(text){
@@ -457,6 +461,7 @@ var playState = {
 
     endTurn: function(){
         turn = false;
+        self.removeSkipButton();
     },
     takenCards: function(cards){
         console.log(cards);
@@ -496,6 +501,9 @@ var playState = {
     removeDeck: function(){
         if(deckCard != null) {
             deckCard.destroy();
+            deckCard = null;
+
+
         }
     },
     placeDeckCard: function(){
@@ -503,6 +511,24 @@ var playState = {
         deckCard.x = game.world.width - cardWidth - 16;
         deckCard.y = 14;
         deckCard.onInputDown.add(playState.onClickDeckCard);
+    },
+
+    addSkipButton: function(){
+        console.log(deckCard);
+        if( deckCard == null ) {
+            skipTurn = game.add.button(0, 0, 'skipTurn');
+            skipTurn.x = game.world.width - cardWidth - 150;
+            skipTurn.y = 280;
+            skipTurn.onInputDown.add(function () {
+                alert('skip turn');
+            });
+        }
+    },
+
+    removeSkipButton: function(){
+        if( skipTurn != null){
+            skipTurn.destroy();
+        }
     }
 };
 
