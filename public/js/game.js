@@ -183,6 +183,7 @@ var playState = {
         turn = false;
         self.renderTurnText("it's "+player._nickname+"'s turn" );
         self.removeSkipButton();
+        self.removeTakeCardsButton();
     },
 
     renderTurnText: function(text){
