@@ -21,6 +21,9 @@ var deckCard = null;
 var skipTurn = null;
 var takeCards = null;
 var hasDebt = false;
+
+var suitsButtons = null;
+
 var loadState = {
 
 
@@ -35,6 +38,12 @@ var loadState = {
         game.load.image('playTable','/images/play-table.jpg');
         game.load.image('skipTurn','/images/skip-turn.png');
         game.load.image('takeCards','/images/take-cards.png');
+
+        game.load.image('btnClubs','/images/btn-clubs.png');
+        game.load.image('btnDiamonds','/images/btn-diamonds.png');
+        game.load.image('btnHearts','/images/btn-hearts.png');
+        game.load.image('btnSpades','/images/btn-spades.png');
+
         game.load.image('back','/images/cardBack_red2.png');
         game.load.image('clubs2','/images/cardClubs2.png');
         game.load.image('clubs3','/images/cardClubs3.png');
@@ -139,6 +148,30 @@ var playState = {
         rectRight.onInputDown.add(playState.onClickRectRight);
         rectRight.alpha = 0;
         rectRight.visible = false;
+
+
+        suitsButtons = game.add.group();
+        var button;
+
+        button = game.add.button(70,70 , 'btnClubs');
+        button.onInputDown.add(playState.onClickSuitClubs);
+        suitsButtons.add(button);
+
+        button = game.add.button(10,70, 'btnDiamonds');
+        button.onInputDown.add(playState.onClickSuitDiamonds);
+        suitsButtons.add(button);
+
+        button = game.add.button(70,10, 'btnHearts');
+        button.onInputDown.add(playState.onClickSuitHearts);
+        suitsButtons.add(button);
+
+        button = game.add.button(10,10, 'btnSpades');
+        button.onInputDown.add(playState.onClickSuitSpades);
+        suitsButtons.add(button);
+
+        suitsButtons.x = 170;
+        suitsButtons.y = 230;
+        suitsButtons.visible = false;
 
         self.reshuffle();
 
@@ -573,6 +606,34 @@ var playState = {
     paidDebt: function(cards){
         self.addCardsToHand(cards);
         self.removeTakeCardsButton();
+    },
+
+    onClickSuitButton: function(suit){
+        if(!turn)
+            return false;
+
+        console.log( " choose " + suit);
+    },
+
+    onClickSuitClubs: function(){
+        self.onClickSuitButton('clubs');
+    },
+    onClickSuitDiamonds: function(){
+        self.onClickSuitButton('diamonds');
+    },
+    onClickSuitHearts: function(){
+        self.onClickSuitButton('hearts');
+    },
+    onClickSuitSpades: function(){
+        self.onClickSuitButton('spades');
+    },
+
+    showSuitsButtons: function(){
+        suitsButtons.visible = true;
+    },
+
+    hideSuitsButtons: function(){
+        suitsButtons.visible = false;
     }
 };
 
