@@ -22,6 +22,11 @@ var deckCard = null;
 var skipTurn = null;
 var takeCards = null;
 var hasDebt = false;
+var music = null;
+
+var soundPlace = null;
+var soundSlide = null;
+var soundShuffle = null;
 
 var jackActive = false;
 var jackSuit = null;
@@ -37,6 +42,12 @@ var loadState = {
             font: '30px Courier',
             fill: '#ffffff'
         });
+
+        game.load.audio('lobbyMusic', ['/audio/lobby-music.mp3', '/audio/lobby-music.ogg']);
+
+        game.load.audio('soundPlace', ['/audio/card-place.mp3', '/audio/card-place.ogg']);
+        game.load.audio('soundSlide', ['/audio/card-slide.mp3', '/audio/card-slide.ogg']);
+        game.load.audio('soundShuffle', ['/audio/card-shuffle.mp3', '/audio/card-shuffle.ogg']);
 
         game.load.image('backgroundLobby','/images/background-lobby.jpg');
         game.load.image('playTable','/images/play-table.jpg');
@@ -118,6 +129,10 @@ var lobbyState = {
         // Add background
         game.add.sprite( 0, 0, 'backgroundLobby');
 
+        music = game.add.audio('lobbyMusic');
+        music.loop = true;
+        music.play();
+
     },
 
     startGame: function(){
@@ -127,6 +142,13 @@ var lobbyState = {
 };
 var playState = {
     create: function(){
+
+        music.stop();
+
+        soundPlace = game.add.audio('soundPlace');
+        soundSlide = game.add.audio('soundSlide');
+        soundShuffle = game.add.audio('soundShuffle');
+
         playState.started = true;
         game.add.sprite( 0, 0, 'playTable');
         self = playState;
@@ -436,6 +458,7 @@ var playState = {
         self.place(card);
 
         card.destroy();
+        soundPlace.play();
         playState.shiftCards();
     },
     resetCardsPlacement: function(){
@@ -495,6 +518,7 @@ var playState = {
         tableCard._suit = card._suit;
 
         tableCards.add(tableCard);
+        soundPlace.play();
     },
 
     serverPlace: function(card){
@@ -526,6 +550,7 @@ var playState = {
     },
     takenCards: function(cards){
 
+            soundSlide.play();
             self.addCardsToHand(cards);
             self.endTurn();
 
@@ -544,6 +569,8 @@ var playState = {
         }
     },
     reshuffle: function(lastCard){
+
+        soundShuffle.play();
         if( tableCards != null){
             tableCards.destroy();
         }
