@@ -475,7 +475,13 @@ var playState = {
         self.removeSkipButton();
     },
     takenCards: function(cards){
-        console.log(cards);
+
+            self.addCardsToHand(cards);
+            self.endTurn();
+
+    },
+
+    addCardsToHand: function(cards){
         for( var i = 0; i < cards.length; i++){
             // For some reason this doesn't work :/
             //    playState.actionOnClick();
@@ -486,7 +492,6 @@ var playState = {
             //console.log(cardKey);
             playState.giveCard(cardKey, cards[i]._value, cards[i]._suit);
         }
-        self.endTurn();
     },
     reshuffle: function(lastCard){
         if( tableCards != null){
@@ -554,6 +559,7 @@ var playState = {
     },
 
     removeTakeCardsButton: function(){
+        hasDebt = false;
         if( takeCards != null){
             takeCards.destroy();
         }
@@ -562,6 +568,11 @@ var playState = {
     hasDebt: function(){
         hasDebt = true;
         this.addTakeCardsButton();
+    },
+
+    paidDebt: function(cards){
+        self.addCardsToHand(cards);
+        self.removeTakeCardsButton();
     }
 };
 

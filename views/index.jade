@@ -203,6 +203,10 @@ html(lang="en")
                 playState.hasDebt();
             });
 
+            socket.on('paidDebt', function(cards){
+                playState.paidDebt(cards);
+            });
+
             $(function(){
 
                 init();

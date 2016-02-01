@@ -236,6 +236,13 @@ io.on('connection', function(socket) {
         GameManager.skipTurn(socket.player);
     });
 
+    socket.on('takeCards', function(){
+        var cards = GameManager.payDebt(socket.player);
+        if( cards != false) {
+            socket.emit('paidDebt', cards);
+        }
+    });
+
 
 });
 

@@ -19,11 +19,12 @@ Player.prototype.getId = function(){
 }
 
 Player.prototype.give = function(cards) {
-
+    console.log(cards);
     if( cards == null || typeof cards.length == "undefined")
         return false;
 
     for(var i = 0; i < cards.length; i++) {
+        console.log('given card to player '+ this._nickname);
         this._hand.push(cards[i]);
     }
 }

@@ -211,11 +211,10 @@ Game.prototype.takeCards = function(player, amount) {
     }
 
 
-    for( var i = 0; i < cards.length; i++ ){
+    player.give(cards);
 
-        player.give(cards[i]);
-    }
 
+    console.log(player.getHand());
     return cards;
 }
 
@@ -280,6 +279,16 @@ Game.prototype.messageNextPlayer = function(event, data){
         data: data
     });
     return true;
+}
+
+Game.prototype.payDebt = function(player){
+    var cards = this.takeCards(player, this._debt);
+    console.log(player._nickname + " paid his debt of "+ this._debt + " cards");
+
+    // Reset debt
+    this._debt = 0;
+
+    return cards;
 }
 
 module.exports = Game;
