@@ -141,6 +141,14 @@ Game.prototype.move = function(player, card){
         return false;
     }
 
+    // The player can only place "2's" and "jokers" when there is a debt
+    if( this._debt > 0){
+        if(card._value != 0 && card._value != 2){
+            console.log(player._nickname + " tried to place a card that is not a 2 or a joker");
+            return false;
+        }
+    }
+
     // Take the card from the player
     player.take(card);
 
