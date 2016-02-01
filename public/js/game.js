@@ -254,7 +254,7 @@ var playState = {
         if( turnText != null)
             turnText.destroy();
 
-        turnText = game.add.text(game.world.centerX, 150, text, {
+        turnText = game.add.text(10, 10, text, {
             font: '30px Arial',
             fill: '#ffffff'
         });
@@ -549,6 +549,7 @@ var playState = {
     onClickDeckCard: function(){
         if(!turn)
             return false;
+        self.resetCardsActive();
         socket.emit('takeCard');
 
     },
