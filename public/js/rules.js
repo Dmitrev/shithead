@@ -8,7 +8,7 @@ var rules = {
 
         // First card on table is always allowed
         console.log(card, lastCard);
-        if( lastCard == null)
+        if( lastCard == null || lastCard._value == 0)
             return true;
 
         if( ref.sameSuit(card, lastCard)){
