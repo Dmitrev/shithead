@@ -14,6 +14,7 @@ var Game = function(eventEmitter) {
   this._deck = null;
   this._deckBuilder = new DeckBuilder();
   this._currentTurn = null;
+  this._rotationReversed = false;
 
   // End turn after placing card (modified by special effect)
   this._endTurn = true;
@@ -102,9 +103,18 @@ Game.prototype.nextTurn = function(){
     }
     else{
 
-        next = ++this._currentTurn;
-        if( typeof this._players[next] == "undefined"){
-            next = 0;
+        if( !this._rotationReversed ) {
+
+            next = ++this._currentTurn;
+            if (typeof this._players[next] == "undefined") {
+                next = 0;
+            }
+        }
+        else{
+            next = --this._currentTurn;
+            if (typeof this._players[next] == "undefined") {
+                next = this._players.length - 1;
+            }
         }
 
     }
@@ -294,6 +304,9 @@ Game.prototype.triggerSpecialEffect = function(card, player){
         this._jackActive = true;
         this._eventEmitter.emit('chooseSuit', player);
     }
+    else if( card._value == 1){
+        this.flipRotation();
+    }
 
 }
 
@@ -351,6 +364,12 @@ Game.prototype.setSuit = function(suit){
 
     return true;
 }
-
+ Game.prototype.flipRotation = function(){
+     if( this._rotationReversed ){
+         this._rotationReversed = false;
+         return false;
+     }
+     this._rotationReversed = true;
+ }
 
 module.exports = Game;
