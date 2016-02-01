@@ -194,10 +194,9 @@ html(lang="en")
             });
 
             socket.on('noCardsLeft', function(){
-
-                // Remove cards from table
-                //playState.reshuffle();
-
+                console.log('no cards left');
+                // Remove deck
+                playState.removeDeck();
             });
 
             $(function(){

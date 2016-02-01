@@ -317,10 +317,13 @@ eventEmitter.on('reshuffle', function(lastCard){
     io.sockets.emit('reshuffle', lastCard);
 });
 
-eventEmitter.on('noCardsLeft', function(player){
+eventEmitter.on('noCardsLeft', function(){
     io.sockets.emit('noCardsLeft');
 });
 
+eventEmitter.on('deckEmpty', function(){
+    io.sockets.emit('noCardsLeft');
+});
 //eventEmitter.on('dealCards', dealCardsHandler);
 //
 function dealCardsHandler(socket){

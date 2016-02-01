@@ -191,6 +191,11 @@ Game.prototype.takeCards = function(player, amount) {
         return false;
     }
 
+    if (this._deck.isEmpty() ){
+        this._deck.reshuffleCards();
+
+    }
+
 
     for( var i = 0; i < cards.length; i++ ){
 

@@ -53,7 +53,7 @@ Deck.prototype.takeOne = function(){
 
   if( this.isEmpty() ){
 
-    return this.reshuffleCards();
+    return this.reshuffleCards(true);
   }
 
 
@@ -75,11 +75,12 @@ Deck.prototype.getLastCard = function(){
   return this._graveYard[ this._graveYard.length-1 ];
 }
 
-Deck.prototype.reshuffleCards = function(){
+Deck.prototype.reshuffleCards = function(take){
   console.log('Deck is empty, shuffling cards');
 
-  if( this._graveYard.length == 0){
-    console.log('no cards in graveYard');
+  if( this._graveYard.length < 2){
+    console.log('not enough cards in graveYard');
+    this._eventEmitter.emit('deckEmpty');
     return false;
   }
 
@@ -99,7 +100,7 @@ Deck.prototype.reshuffleCards = function(){
   this._eventEmitter.emit('reshuffle', lastCard);
   this.shuffle();
 
-  if( this._cards.length > 0) {
+  if( this._cards.length > 0 && typeof take != "undefined") {
     return this._cards.pop();
   }
 }

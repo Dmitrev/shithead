@@ -137,10 +137,7 @@ var playState = {
 
         self.reshuffle();
 
-        deckCard = game.add.button(0,0, 'back');
-        deckCard.x = game.world.width - cardWidth - 16;
-        deckCard.y = 14;
-        deckCard.onInputDown.add(playState.onClickDeckCard);
+        self.placeDeckCard();
 
         socket.emit('askCards');
         //console.log("ASK CARDS CLIENT");
@@ -494,6 +491,18 @@ var playState = {
         if( lastCard != null) {
             self.serverPlace(lastCard);
         }
+    },
+
+    removeDeck: function(){
+        if(deckCard != null) {
+            deckCard.destroy();
+        }
+    },
+    placeDeckCard: function(){
+        deckCard = game.add.button(0,0, 'back');
+        deckCard.x = game.world.width - cardWidth - 16;
+        deckCard.y = 14;
+        deckCard.onInputDown.add(playState.onClickDeckCard);
     }
 };
 
