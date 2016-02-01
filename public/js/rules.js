@@ -12,6 +12,12 @@ var rules = {
         else if( rules.sameValue(card, lastCard) ){
             return true;
         }
+        else if( rules.isJack(card) ){
+            return true;
+        }
+        else if( rules.isJoker(card)){
+            return true;
+        }
 
         return false;
     },
@@ -28,6 +34,22 @@ var rules = {
 
     sameValue: function(card, lastCard){
         if( card._value != lastCard._value){
+            return false;
+        }
+
+        return true;
+    },
+    isJack: function(card){
+
+        if( card._value != 11){
+            return false;
+        }
+
+        return true;
+    },
+
+    isJoker: function(card){
+        if( card._value != 0){
             return false;
         }
 

@@ -56,6 +56,9 @@ DeckBuilder.prototype.build = function() {
     }
   }
 
+    // Add 2 jokers
+    cards.push( new Card(0) );
+    cards.push( new Card(0) );
   return cards;
 };
 
