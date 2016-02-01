@@ -308,4 +308,22 @@ Game.prototype.payDebt = function(player){
     return cards;
 }
 
+Game.prototype.setSuit = function(suit){
+
+    if( !this._jackActive )
+        return false;
+
+    if( !this._deckBuilder.suitExists(suit)){
+        return false;
+    }
+
+    this._jackSuit = suit;
+    this._endTurn = true;
+
+    this.nextTurn();
+
+    return true;
+}
+
+
 module.exports = Game;

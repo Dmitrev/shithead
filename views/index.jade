@@ -211,6 +211,10 @@ html(lang="en")
                 playState.showSuitsButtons();
             });
 
+            socket.on('suitSet', function(suit){
+                console.log('jacksuit: '+suit);
+            });
+
             $(function(){
 
                 init();

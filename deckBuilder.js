@@ -30,6 +30,16 @@ DeckBuilder.prototype.getPlayerCount = function(){
   return this._playerCount;
 }
 
+DeckBuilder.prototype.suitExists = function(s){
+    for (var suit in suits) {
+        if( s == suit){
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // Build the Deck of cards
 DeckBuilder.prototype.build = function() {
 

@@ -243,6 +243,14 @@ io.on('connection', function(socket) {
         }
     });
 
+    socket.on('setSuit', function(suit){
+
+        if( GameManager.setSuit(suit) ){
+            io.sockets.emit('suitSet', suit);
+        }
+
+    });
+
 
 });
 

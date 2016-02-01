@@ -609,10 +609,7 @@ var playState = {
     },
 
     onClickSuitButton: function(suit){
-        if(!turn)
-            return false;
-
-        console.log( " choose " + suit);
+        socket.emit('setSuit', suit);
     },
 
     onClickSuitClubs: function(){
@@ -629,6 +626,7 @@ var playState = {
     },
 
     showSuitsButtons: function(){
+        turn = false;
         suitsButtons.visible = true;
     },
 
