@@ -23,6 +23,9 @@ var skipTurn = null;
 var takeCards = null;
 var hasDebt = false;
 
+var jackActive = false;
+var jackSuit = null;
+
 var suitsButtons = null;
 
 var loadState = {
@@ -458,13 +461,22 @@ var playState = {
             }
         }
 
+        if( jackActive ){
+            if( card._suit != jackSuit && card._value != 0 && card.value != 11){
+                self.resetCardsActive();
+                return false;
+            }
+        }
+
 
         var lastCard = self.getLastCard();
 
         //console.log(lastCard);
-        if( !rules.check(card, lastCard)){
-            self.resetCardsActive();
-            return false;
+        if( !jackActive ) {
+            if (!rules.check(card, lastCard)) {
+                self.resetCardsActive();
+                return false;
+            }
         }
 
         // Todo: check rules
@@ -643,7 +655,7 @@ var playState = {
 
     hideSuitsButtons: function(){
 
-        suitsButtons.forEach( function(){
+        suitsButtons.forEach( function(item){
             item.visible = false;
         } );
 
@@ -651,6 +663,10 @@ var playState = {
     },
 
     showSuitButton: function(suit){
+
+        jackActive = true;
+        jackSuit = suit;
+
         suitsButtons.forEach( function(item){
             if( item._suit == suit){
                 item.visible = true;
@@ -660,6 +676,13 @@ var playState = {
         } );
 
         suitsButtons.visible = true;
+    },
+
+    endJackEffect: function(){
+        jackActive = false;
+        jackSuit = null;
+
+        self.hideSuitsButtons();
     }
 };
 

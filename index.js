@@ -356,6 +356,10 @@ eventEmitter.on('chooseSuit', function(player){
     io.sockets.connected[player._socketid].emit('chooseSuit');
 });
 
+eventEmitter.on('endJackEffect', function(){
+    io.sockets.emit('endJackEffect');
+});
+
 function dealCardsHandler(socket){
 
     var players = GameManager.getPlayers();

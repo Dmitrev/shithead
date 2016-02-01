@@ -171,6 +171,10 @@ html(lang="en")
                 playState.serverPlace(card);
             });
 
+            socket.on('endJackEffect', function(){
+                playState.endJackEffect();
+            });
+
             socket.on('stopped', function(data){
                 $('#playerData').show();
                 $('#lobby').hide();

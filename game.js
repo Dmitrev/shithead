@@ -147,11 +147,14 @@ Game.prototype.move = function(player, card){
         return false;
     }
 
-    console.log(rules.check);
-    if( !rules.check(card, this._deck.getLastCard(), rules ) ){
-        console.log(player._nickname + " tried to place a card against the rules");
-        return false;
+
+    if( !this._jackActive ) {
+        if (!rules.check(card, this._deck.getLastCard(), rules)) {
+            console.log(player._nickname + " tried to place a card against the rules");
+            return false;
+        }
     }
+
 
     // The player can only place "2's" and "jokers" when there is a debt
     if( this._debt > 0){
@@ -160,6 +163,20 @@ Game.prototype.move = function(player, card){
             return false;
         }
     }
+
+    if( this._jackActive ){
+
+        if( card._suit != this._jackSuit && card._value != 0 && card.value != 11 ){
+            console.log(player._nickname + " tried to place a card that is not allowed by the jack rule");
+            return false;
+        }
+
+        this._jackActive = false;
+        this._jackSuit = null;
+        this._eventEmitter.emit('endJackEffect');
+    }
+
+
 
     // Take the card from the player
     player.take(card);
