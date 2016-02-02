@@ -225,6 +225,10 @@ io.on('connection', function(socket) {
     });
 
     socket.on('takeCard', function(){
+        // If player has a debt, don't allow to draw cards
+        if( GameManager._debt > 0)
+            return false;
+
         var cards = GameManager.takeCards(socket.player, 1);
         if( cards != false) {
             GameManager.nextTurn();

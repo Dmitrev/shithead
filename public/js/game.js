@@ -32,7 +32,7 @@ var jackActive = false;
 var jackSuit = null;
 
 var suitsButtons = null;
-
+var drawEnabled = true;
 var loadState = {
 
 
@@ -484,6 +484,9 @@ var playState = {
             }
         }
 
+        // Re-Allow the player to draw cards again, might have been disabled
+        self.enableDraw(true);
+
         if( jackActive ){
             if( card._suit != jackSuit && card._value != 0 && card.value != 11){
                 self.resetCardsActive();
@@ -547,7 +550,7 @@ var playState = {
         return lastCard;
     },
     onClickDeckCard: function(){
-        if(!turn)
+        if(!turn || !drawEnabled)
             return false;
         self.resetCardsActive();
         socket.emit('takeCard');
@@ -653,11 +656,14 @@ var playState = {
     },
 
     hasDebt: function(){
+        // Don't allow the player to bypass the debt by drawing a card
+        self.enableDraw(false);
         hasDebt = true;
         this.addTakeCardsButton();
     },
 
     paidDebt: function(cards){
+        self.enableDraw(true);
         self.addCardsToHand(cards);
         self.removeTakeCardsButton();
     },
@@ -720,7 +726,12 @@ var playState = {
         jackSuit = null;
 
         self.hideSuitsButtons();
+    },
+
+    enableDraw: function(bool){
+        drawEnabled = bool;
     }
+
 };
 
 
