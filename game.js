@@ -164,7 +164,7 @@ Game.prototype.move = function(player, card){
 
     if( this._jackActive ){
 
-        if( card._suit != this._jackSuit && card._value != 0 && card.value != 11 ){
+        if( card._suit != this._jackSuit && card._value != 0 && card._value != 11 ){
             console.log(player._nickname + " tried to place a card that is not allowed by the jack rule");
             return false;
         }

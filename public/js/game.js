@@ -485,7 +485,7 @@ var playState = {
         }
 
         if( jackActive ){
-            if( card._suit != jackSuit && card._value != 0 && card.value != 11){
+            if( card._suit != jackSuit && card._value != 0 && card._value != 11){
                 self.resetCardsActive();
                 return false;
             }
