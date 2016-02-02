@@ -88,6 +88,25 @@ Game.prototype.getPlayers = function(){
     return this._players;
 }
 
+// Get all that about the players without giving away too much info for the client side
+Game.prototype.getPlayersClientSide = function(){
+    var players = [];
+
+    for( var i = 0; i < this._players.length; i++){
+
+        var player = {
+            nickname: this._players[i]._nickname,
+            cardCount: this._players[i].getHand().length,
+            onTurn: (i == this._currentTurn),
+            ready: this._players[i]._ready
+        };
+
+        players.push(player);
+    }
+
+    return players;
+}
+
 Game.prototype.isStarted = function(){
     return this._started;
 }

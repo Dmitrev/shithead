@@ -26,7 +26,7 @@ function getGameData(){
 
     var data = {
         playerCount: GameManager.getPlayerCount(),
-        players: GameManager.getPlayers()
+        players: GameManager.getPlayersClientSide()
     }
 
     return data;
@@ -245,6 +245,7 @@ io.on('connection', function(socket) {
         if( cards != false) {
             socket.emit('paidDebt', cards);
         }
+        sendUpdate();
     });
 
     socket.on('setSuit', function(suit){
@@ -335,6 +336,9 @@ eventEmitter.on('nextTurn', function(player){
     // Tell all the others that it's players turn
     socket.broadcast.emit('newTurn', player);
 
+    // Send update about the game
+    sendUpdate();
+
 });
 
 eventEmitter.on('reshuffle', function(lastCard){
@@ -404,6 +408,11 @@ function notEnoughPlayers(){
 function firstPlayerTurn(){
     // Give first turn to a random player
     GameManager.firstTurn();
+}
+
+// Send update to all clients about the game
+function sendUpdate(){
+    io.sockets.emit('update', getGameData());
 }
 // Start the server
 http.listen(3000, function(){

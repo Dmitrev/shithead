@@ -1,11 +1,15 @@
-body{
+body, html{
     font-family: Helvetica, sans-serif;
     margin:0;
+    height: 100%;
+    min-height: 100%;
+    padding-top:3em;
+    background:#0E353A;
 }
 
 #wrapper{
     width:800px;
-    margin: 3em auto 0 auto;
+    margin: 0 auto;
     padding:0 0 0 0;
     position:relative;
 
@@ -55,4 +59,49 @@ body{
 
 #kicked{
     display:none;
+}
+
+#playerSidebar{
+    position:absolute;
+    width:300px;
+    background: #f6f6f6;
+    left:-300px;
+    height:100%;
+    border:1px solid #ccc;
+}
+
+#playerSidebar ul{
+    margin:0;
+    padding:0;
+}
+#playerSidebar ul li{
+    display:block;
+    padding:1em;
+    /*animation:pulse 5s infinite;*/
+    border-bottom:1px solid #ccc;
+}
+
+#playerSidebar ul li.active{
+    animation:pulse 5s infinite;
+}
+#playerSidebar ul li p{
+    margin:0;
+}
+
+#playerSidebar ul li em{
+    padding-left:1em;
+    font-size:0.9em;
+}
+
+/*@keyframes pulse {*/
+    /*from { box-shadow:0px 0px 10px 3px #0066cc; }*/
+    /*to { box-shadow:0px 0px 20px 5px #0066cc; }*/
+/*}*/
+
+@-webkit-keyframes pulse
+{
+    0% {background-color: #99b8ff
+    }
+    50% {background-color: #7392d8;}
+    100% {background-color: #99b8ff}
 }
