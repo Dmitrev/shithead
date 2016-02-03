@@ -24,9 +24,15 @@ var timeoutTime = 30000;
 
 function getGameData(){
 
+
+
     var data = {
         playerCount: GameManager.getPlayerCount(),
         players: GameManager.getPlayersClientSide()
+    }
+
+    if( GameManager.isStarted() ){
+        data.currentCard =  GameManager._deck.getLastCard();
     }
 
     return data;
@@ -264,6 +270,11 @@ io.on('connection', function(socket) {
             io.sockets.emit('suitSet', suit);
         }
 
+    });
+
+    socket.on('specGetUpdate', function(){
+        var data = getGameData();
+        socket.emit('specUpdate', data);
     });
 
 

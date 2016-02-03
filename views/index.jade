@@ -69,6 +69,30 @@ html(lang="en")
                 }
             }
 
+            function joinSpectate(){
+                // Check if the game is loaded
+                if( loaded ){
+                    joinGameView();
+                    return lobbyState.startGame();
+                }
+
+                setTimeout(joinSpectate, 50);
+            }
+
+            function joinGameView(){
+                if( self != null && typeof self != 'undefined' && self != window){
+                    socket.emit('specGetUpdate');
+                    return false;
+                }
+                setTimeout(joinGameView, 50);
+            }
+
+            socket.on('specUpdate', function(data){
+                updatePlayerSidebar(data)
+                console.log(data);
+                playState.serverPlace(data.currentCard);
+            });
+
 
             function updatePlayerCount(count){
                 $('#pc').find('span').text(count);
@@ -162,7 +186,7 @@ html(lang="en")
             });
 
             socket.on('lateJoin', function(){
-                alert('The game already started, you can no longer join.')
+                joinSpectate();
             });
 
             socket.on('startGame', function(){

@@ -1,6 +1,6 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
 
-
+var loaded = false;
 var sprite;
 var items;
 var button;
@@ -117,6 +117,7 @@ var loadState = {
     },
 
     create: function(){
+        loaded = true;
         game.state.start('lobby');
     }
 };
@@ -143,7 +144,8 @@ var lobbyState = {
 var playState = {
     create: function(){
 
-        music.stop();
+        if( music != null)
+            music.stop();
 
         soundPlace = game.add.audio('soundPlace');
         soundSlide = game.add.audio('soundSlide');
