@@ -39,6 +39,9 @@ function getGameData(){
 }
 
 function checkStartGame(){
+    // Prevent the game from being started more than once and avoid double cards
+    if( GameManager.isStarted() )
+        return false;
 
     var playerCount = GameManager.getPlayerCount();
 
@@ -64,9 +67,12 @@ function checkStartGame(){
         return false;
     }
 
+
+
     // Yeah start the game! Let's go Whoo!
     GameManager.start();
     io.sockets.emit('startGame');
+
 
 }
 
@@ -80,6 +86,7 @@ app.get('/', function (req, res){
 
 
 io.on('connection', function(socket) {
+
 
     sockets.push(socket);
 
@@ -119,6 +126,9 @@ io.on('connection', function(socket) {
 
         // If a guest leaves, don't do anything
         if(typeof socket.player == "undefined")
+            return false;
+        // If game is not yet started, there is nothing more to check
+        if( !GameManager.isStarted() )
             return false;
 
         // Check if the player who left is currently on turn
