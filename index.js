@@ -211,11 +211,7 @@ io.on('connection', function(socket) {
 
         if( GameManager.allDone() ){
             // todo: End game
-            var playerList = GameManager._playersDone;
-            playerList.push( GameManager.getLoser() );
-
-            GameManager.stop();
-            io.sockets.emit('stopped', {reason:2, playerList: playerList});
+            eventEmitter.emit('endGame');
             return false
         }
 
@@ -366,6 +362,14 @@ eventEmitter.on('chooseSuit', function(player){
 
 eventEmitter.on('endJackEffect', function(){
     io.sockets.emit('endJackEffect');
+});
+
+eventEmitter.on('endGame', function(){
+    var playerList = GameManager._playersDone;
+    playerList.push( GameManager.getLoser() );
+
+    GameManager.stop();
+    io.sockets.emit('stopped', {reason:2, playerList: playerList});
 });
 
 function dealCardsHandler(socket){

@@ -126,7 +126,6 @@ Game.prototype.kickPlayerByIndex = function(index){
     if( typeof this._players[index] == "undefined")
         return false;
     this._players.splice(index, 1);
-    console.log()
 }
 
 Game.prototype.stop = function(){
@@ -266,16 +265,17 @@ Game.prototype.takeCards = function(player, amount) {
 
 Game.prototype.skipTurn = function(player){
 
-    var currentTurnPlayer = null;
-
-    if( typeof this._players[ this._currentTurn ] != "undefined"){
-        currentTurnPlayer = this._players[ this._currentTurn ];
-    }
-
-    if( currentTurnPlayer._socketid != player._socketid){
+    // Check if the player currently on turn is actually existing
+    if( typeof this._players[ this._currentTurn ] == "undefined"){
         return false;
     }
 
+    var currentTurnPlayer = this._players[ this._currentTurn ];
+    // Verify that the current socket is the actual player that is on turn
+    if( currentTurnPlayer._socketid != player._socketid){
+        return false;
+    }
+    // The player may only skip a turn if the deck is empty
     if( !this._deck.isEmpty()){
         return false;
     }
@@ -316,24 +316,8 @@ Game.prototype.triggerSpecialEffect = function(card, player){
 }
 
 Game.prototype.messageNextPlayer = function(event, data){
-    var next = null;
-    if( this._currentTurn == null){
-        next = 0;
-    }
-    else{
-
-        next = this._currentTurn + 1;
-        if( typeof this._players[next] == "undefined"){
-            next = 0;
-        }
-
-    }
-
-    if( typeof this._players[next] == "undefined"){
-        return false;
-    }
-
-    var nextPlayer = this._players[next];
+    var nextTurnIndex = this.getNextTurn();
+    var nextPlayer = this._players[nextTurnIndex];
 
     this._eventEmitter.emit('messageNextPlayer', {
         event: event,
@@ -378,33 +362,77 @@ Game.prototype.setSuit = function(suit){
  }
 
 Game.prototype.setNextTurn = function(){
-    var next = null;
+
     if( this._currentTurn == null){
-        next = 0;
+        this._currentTurn = 0;
+        return false;
     }
-    else{
+    var next = this.getNextTurn();
+    this._currentTurn = next;
+}
 
-        if( !this._rotationReversed ) {
+Game.prototype.getNextTurn = function(){
 
-            next = ++this._currentTurn;
-            if (typeof this._players[next] == "undefined") {
-                next = 0;
-            }
-        }
-        else{
-            next = --this._currentTurn;
-            if (typeof this._players[next] == "undefined") {
-                next = this._players.length - 1;
-            }
-        }
 
-    }
+    var next = this.getNextPlayer(this._currentTurn);
+
 
     if( typeof this._players[next] == "undefined"){
         return false;
     }
 
-    this._currentTurn = next;
+    return next;
+}
+
+Game.prototype.getNextPlayer = function(currentIndex){
+
+    if( this.notEnoughPlayers() )
+    {
+        this._eventEmitter.emit('endGame');
+        return false;
+    }
+
+    if( !this._rotationReversed ) {
+
+        next = ++currentIndex;
+        if( next > this._players.length -1){
+            next = 0;
+        }
+
+    }
+    else{
+
+        next = --currentIndex;
+        if (next < 0) {
+            next = this._players.length - 1;
+        }
+    }
+
+    if (typeof this._players[next] == "undefined" || this._players[next]._done) {
+        return this.getNextPlayer(next);
+    }
+
+    return next;
+
+
+}
+
+Game.prototype.notEnoughPlayers = function(){
+    if( this._players.length == 1)
+        return true;
+
+    var playersDone = 0;
+    for( var i = 0; i < this._players.length; i++){
+        if( this._players[i]._done ){
+            playersDone++;
+        }
+    }
+
+    if( playersDone >= this._players.length - 1){
+        return true;
+    }
+
+    return false;
 }
 
 module.exports = Game;
