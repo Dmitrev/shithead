@@ -142,6 +142,16 @@ var lobbyState = {
     }
 };
 var playState = {
+
+    restart: function(){
+        resetGlobalVars();
+        game.state.start('lobby');
+    },
+
+    stop: function(){
+        game.state.start('gameOver');
+    },
+
     create: function(){
 
         if( music != null)
@@ -443,6 +453,9 @@ var playState = {
     },
 
     getActiveCard: function(){
+        if( typeof items == "undefined" || items == null)
+            return false;
+
         var card = null;
         items.forEachExists(function (item) {
             ///console.log(item);
@@ -741,8 +754,54 @@ var playState = {
 };
 
 
+var gameOverState = {
+
+    create: function(){
+        // Add background
+        game.add.sprite( 0, 0, 'backgroundLobby');
+    }
+}
+
 game.state.add('load', loadState);
 game.state.add('lobby', lobbyState);
 game.state.add('play', playState);
+game.state.add('gameOver', gameOverState);
 
 game.state.start('load');
+
+
+function resetGlobalVars(){
+    loaded = false;
+    sprite = null;
+    items = null;
+    button = null;
+    x = 0;
+    y = 0;
+    cardWidth = 140;
+    cardHeight = 190;
+    self = null;
+    spacing = cardWidth;
+    cardsInView = 5;
+    currentView = 0;
+    tableCards = null;
+    rectLeft = null;
+    rectRight = null;
+// Check if the it's the player's turn currently
+    turn = false;
+    turnText = null;
+    deckCard = null;
+    skipTurn = null;
+    takeCards = null;
+    hasDebt = false;
+    music = null;
+
+    soundPlace = null;
+    soundSlide = null;
+    soundShuffle = null;
+
+    jackActive = false;
+    jackSuit = null;
+
+    suitsButtons = null;
+    drawEnabled = true;
+}

@@ -405,7 +405,7 @@ eventEmitter.on('endJackEffect', function(){
 eventEmitter.on('endGame', function(){
     var playerList = GameManager._playersDone;
     playerList.push( GameManager.getLoser() );
-
+    sendUpdate();
     GameManager.stop();
     io.sockets.emit('stopped', {reason:2, playerList: playerList});
 });

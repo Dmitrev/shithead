@@ -138,7 +138,17 @@ Game.prototype.kickPlayerByIndex = function(index){
 }
 
 Game.prototype.stop = function(){
+    // Reset all vars
     this._started = false;
+    this._players = [];
+    this._playersDone = [];
+    this._deck = null;
+    this._currentTurn = null;
+    this._rotationReversed = false;
+    this._endTurn = true;
+    this._jackActive = false;
+    this._jackSuit = null;
+    this._debt = 0;
 }
 
 // Give the first turn to a random player

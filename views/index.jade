@@ -32,7 +32,9 @@ html(lang="en")
                 div(id="kicked")
                     p You have been kicked from the game for being inactive, refresh your browser.
                 div(id="stopped")
-                    p
+                    div
+                div(id="disconnected")
+                    p You have lost connection to the server, attempting to auto re-join...
 
         script(src="/js/phaser.min.js")
         script(src="http://code.jquery.com/jquery-1.11.1.js")
@@ -42,6 +44,7 @@ html(lang="en")
         script(src="/js/game.js")
         script.
             var socket = io();
+            var disconnected = false;
 
                 function init(){
                     $('#ready-btn').hide();
@@ -101,6 +104,7 @@ html(lang="en")
             function updatePlayerSidebar(data){
 
 
+                $('#playerSidebar').show();
                 var element = $('#playerSidebar').find('ul');
                 element.html('');
 
@@ -125,15 +129,38 @@ html(lang="en")
                 updatePlayerCount(data.playerCount);
                 updatePlayerList(data.players);
             }
-            socket.on('chooseNickname', function(){
-                // Show UI
+
+            function chooseNickname(){
                 $('#playerData').show();
                 $('#input-nickname').show();
+            }
+            socket.on('chooseNickname', function(){
+                // Show UI
+                chooseNickname();
                // var name = prompt("What is your name? ");
                // socket.emit('register', name);
 
                //return joined();
             });
+
+            function restartGame(){
+                resetGUI();
+                playState.restart();
+            }
+
+            function reconnected(){
+                disconnected = false;
+                $('#disconnected').hide();
+            }
+
+            function resetGUI(){
+                $('#playerData').hide();
+                $('#playerSidebar').hide();
+                $('#lobby').hide();
+                $('#unready-btn').hide();
+                $('#stopped').hide();
+                $('#disconnected').hide();
+            }
 
             function joined(){
                 $('#ready-btn').show();
@@ -152,7 +179,10 @@ html(lang="en")
             }
 
             function showGameEnd(playerList){
-                var el = $('#stopped').html('');
+
+                playState.stop();
+
+                var el = $('#stopped').find('div').html('');
                 el.append('<h2>Game ended</h2>');
                 el.append('<ol></ol>');
 
@@ -274,6 +304,20 @@ html(lang="en")
 
             socket.on('suitSet', function(suit){
                 playState.showSuitButton(suit);
+            });
+            socket.on('disconnect', function(){
+                disconnected = true;
+                restartGame();
+
+                $('#playerData').show();
+                $('#disconnected').show();
+            });
+
+            socket.on('connect', function(){
+
+                if( disconnected ){
+                    reconnected();
+                }
             });
 
             $(function(){

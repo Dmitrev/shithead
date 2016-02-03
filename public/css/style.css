@@ -57,6 +57,8 @@ body, html{
     display: none;
 }
 
+#stopped{display: none;}
+
 #kicked{
     display:none;
 }
@@ -93,6 +95,9 @@ body, html{
     font-size:0.9em;
 }
 
+#playerSidebar{ display: none;}
+
+#disconnected{display: none;}
 /*@keyframes pulse {*/
     /*from { box-shadow:0px 0px 10px 3px #0066cc; }*/
     /*to { box-shadow:0px 0px 20px 5px #0066cc; }*/
