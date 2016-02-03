@@ -72,13 +72,22 @@ Game.prototype.dealCards = function(){
 }
 
 Game.prototype.removePlayer = function(playerId){
+
+    var cards = null;
     for( var i = 0; i < this._players.length; i++){
 
         if( this._players[i].getId() == playerId ){
+            // Remove the cards from
+            cards = this._players[i].getHand();
+            this._players[i].removeCards();
             this._players.splice(i, 1);
+
         }
 
     }
+
+    if( cards != null)
+        this._deck.returnCards(cards);
 }
 Game.prototype.getPlayerCount = function(){
     return this._players.length;
@@ -433,6 +442,10 @@ Game.prototype.notEnoughPlayers = function(){
     }
 
     return false;
+}
+
+Game.prototype.currentTurnPlayer = function(){
+    return this._players[this._currentTurn];
 }
 
 module.exports = Game;

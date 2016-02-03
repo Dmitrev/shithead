@@ -110,4 +110,8 @@ Player.prototype.checkDone = function(){
 
     return false;
 }
+
+Player.prototype.removeCards = function(){
+    this._hand = [];
+}
 module.exports = Player;

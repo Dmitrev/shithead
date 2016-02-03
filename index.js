@@ -115,9 +115,23 @@ io.on('connection', function(socket) {
         if(typeof socket.player == "undefined")
             return false;
 
+        // Check if the player who left is currently on turn
+        if( GameManager.currentTurnPlayer()._socketid ==  socket.id ){
+            console.log('Give next turn');
+            // If so give the turn to the next player
+            GameManager.nextTurn();
+        }
+
         console.log(socket.player._nickname + ' left the game');
         GameManager.removePlayer( socket.player._id);
-        return eventEmitter.emit('playerLeft');
+        sendUpdate();
+
+        eventEmitter.emit('playerLeft');
+        // Check if we have enough players to continue
+        if(checkEndGame()){
+            return false;
+        }
+
     });
 
     socket.on('ready', function(){
@@ -301,7 +315,7 @@ function checkEndGame(){
     // Check if we still have enough players in the game
     var players = GameManager.getPlayers();
 
-    if( players.length < 2){
+    if( players.length < 2 || GameManager.notEnoughPlayers() ){
         notEnoughPlayers();
         return true;
     }

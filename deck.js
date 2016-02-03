@@ -105,4 +105,9 @@ Deck.prototype.reshuffleCards = function(take){
   }
 }
 
+Deck.prototype.returnCards = function(cards){
+  for( var i = 0; i < cards.length; i++){
+    this._cards.unshift(cards[i]);
+  }
+}
 module.exports = Deck;
