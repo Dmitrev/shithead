@@ -245,6 +245,10 @@ io.on('connection', function(socket) {
         if( GameManager._debt > 0)
             return false;
 
+        // The current player is not on his turn
+        if( GameManager.currentTurnPlayer()._socketid != socket.id)
+            return false;
+
         var cards = GameManager.takeCards(socket.player, 1);
         if( cards != false) {
             GameManager.nextTurn();

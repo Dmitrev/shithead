@@ -554,6 +554,8 @@ var playState = {
     onClickDeckCard: function(){
         if(!turn || !drawEnabled)
             return false;
+        // Prevent from clicking again
+        drawEnabled = false;
         self.resetCardsActive();
         socket.emit('takeCard');
 
