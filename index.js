@@ -262,9 +262,8 @@ io.on('connection', function(socket) {
 
     socket.on('takeCards', function(){
         var cards = GameManager.payDebt(socket.player);
-        if( cards != false) {
-            socket.emit('paidDebt', cards);
-        }
+        socket.emit('paidDebt', cards);
+
         sendUpdate();
     });
 

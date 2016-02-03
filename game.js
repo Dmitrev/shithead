@@ -254,21 +254,17 @@ Game.prototype.takeCards = function(player, amount) {
     this._endTurn = true;
     var cards = this._deck.take(amount);
 
-    if( cards == null || cards.length == 0){
+
+    if( !cards){
         this._eventEmitter.emit('noCardsLeft', player);
         return false;
-    }
-
-    if (this._deck.isEmpty() ){
-        this._deck.reshuffleCards();
-
     }
 
 
     player.give(cards);
 
 
-    console.log(player.getHand());
+    console.log( player._nickname + " has taken "+cards.length + " cards");
     return cards;
 }
 
@@ -286,6 +282,10 @@ Game.prototype.skipTurn = function(player){
     }
     // The player may only skip a turn if the deck is empty
     if( !this._deck.isEmpty()){
+        return false;
+    }
+    // Can't skip turn with debt!
+    if( this._debt > 0){
         return false;
     }
 

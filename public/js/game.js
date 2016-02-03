@@ -240,12 +240,14 @@ var playState = {
 
     yourTurn: function(){
         turn = true;
+        drawEnabled = true;
         self.renderTurnText("It's your turn!");
         self.addSkipButton();
     },
 
     newTurn: function(player){
         turn = false;
+        drawEnabled = false;
         self.renderTurnText("it's "+player._nickname+"'s turn" );
         self.removeSkipButton();
         self.removeTakeCardsButton();

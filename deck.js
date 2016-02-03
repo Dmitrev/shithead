@@ -30,19 +30,27 @@ Deck.prototype.isEmpty = function(){
 }
 
 // Take X amount of cards from the deck
-Deck.prototype.take = function(amount){
+Deck.prototype.take = function(amount) {
+
+  if( !this.canTake() )
+    return false;
+
+  var cardsTaken = this.takeAmount(amount);
+
+  return cardsTaken;
+}
+
+Deck.prototype.takeAmount = function(amount){
 
   var cardsTaken = [];
 
   for( var i = 0; i < amount; i++ ){
 
-   var card = this.takeOne();
-    // No card return, deck must be empty
-    if( card == null )
-      break;
+    var card = this.takeOne();
 
     if( !card)
       break;
+
     cardsTaken.push(card);
   }
 
@@ -51,11 +59,16 @@ Deck.prototype.take = function(amount){
 
 Deck.prototype.takeOne = function(){
 
-  if( this.isEmpty() ){
+  if( this.isEmpty()){
 
-    return this.reshuffleCards(true);
+    if( this.canReshuffle() ) {
+
+      this.reshuffleCards();
+      return this.takeOne();
+    }
+
+    return false;
   }
-
 
   return this._cards.pop();
 
@@ -78,36 +91,44 @@ Deck.prototype.getLastCard = function(){
 Deck.prototype.reshuffleCards = function(take){
   console.log('Deck is empty, shuffling cards');
 
-  if( this._graveYard.length < 2){
+  if( !this.canReshuffle() ){
     console.log('not enough cards in graveYard');
     this._eventEmitter.emit('deckEmpty');
     return false;
   }
 
+  var lastCard = this._graveYard[ this._graveYard.length -1 ];
 
   // Put back all cards except the last
-  for( var i = 0; i < this._graveYard.length - 1; i++){
+  for( var i = 0; i < this._graveYard.length; i++){
     this._cards.push(this._graveYard[i]);
     this._graveYard.splice(i, 1);
   }
 
-  var lastCard = null;
-  if( typeof this._graveYard[0] != "undefined" ) {
-    lastCard = this._graveYard[0];
+
+  if( typeof lastCard != "undefined" ) {
+    console.log("lastCard: ");
+    console.log(lastCard);
+
+    this._eventEmitter.emit('reshuffle', lastCard);
   }
-  console.log("lastCard: ");
-  console.log(lastCard);
-  this._eventEmitter.emit('reshuffle', lastCard);
+
   this.shuffle();
 
-  if( this._cards.length > 0 && typeof take != "undefined") {
-    return this._cards.pop();
-  }
+
 }
 
 Deck.prototype.returnCards = function(cards){
   for( var i = 0; i < cards.length; i++){
     this._cards.unshift(cards[i]);
   }
+}
+
+Deck.prototype.canTake = function(){
+  return this._cards.length > 0 || this.canReshuffle();
+}
+
+Deck.prototype.canReshuffle = function(){
+  return this._graveYard.length > 1;
 }
 module.exports = Deck;
